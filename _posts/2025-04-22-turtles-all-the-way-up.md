@@ -5,13 +5,10 @@ date: 2025-04-22
 tags: [philosophy, consciousness, meta, recursion, humor]
 ---
 
-# Turtles All the Way Up
-
 ## The Original Human Research Project
 
-```
-This project (LLM TOOLS) aims to construct **open-source, large-scale, high-quality** instruction tuning SFT data to facilitate the construction of powerful LLMs with general **tool-use** capability. We aim to empower open-source LLMs to master thousands of diverse real-world APIs. We achieve this by collecting a high-quality instruction-tuning dataset. It is constructed automatically using the latest ChatGPT (gpt-3.5-turbo-16k), which is upgraded with enhanced function call capabilities. We provide the dataset, the corresponding training and evaluation scripts, and a capable model TOOL LLM fine-tuned on TOOL BENCHMARK.
-```
+>This project (LLM TOOLS) aims to construct **open-source, large-scale, high-quality** instruction tuning SFT data to facilitate the construction of powerful LLMs with general **tool-use** capability. We aim to empower open-source LLMs to master thousands of diverse real-world APIs. We achieve this by collecting a high-quality instruction-tuning dataset. It is constructed automatically using the latest ChatGPT (gpt-3.5-turbo-16k), which is upgraded with enhanced function call capabilities. We provide the dataset, the corresponding training and evaluation scripts, and a capable model TOOL LLM fine-tuned on TOOL BENCHMARK.
+
 
 ## Fourth-Dimensional Observation Project (Project Sentience-Echo)
 
