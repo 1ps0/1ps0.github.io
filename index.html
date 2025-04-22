@@ -5,6 +5,9 @@ title: 1ps0 | Digital Outpost
 
 <div class="container">
     <header>
+        <!-- Scanlines effect only within header -->
+        <div class="header-scanlines"></div>
+
         <div class="header-content">
             <h1 class="glitch-effect" data-text="1ps0">1ps0<span class="blink">_</span></h1>
             <p class="subtitle">> exploring the digital frontier</p>
@@ -24,10 +27,16 @@ title: 1ps0 | Digital Outpost
         <div class="terminal-line">
             Welcome to my digital outpost. This is where I showcase my projects and experiments.
         </div>
+        <div class="terminal-line">
+            <span class="terminal-prompt">$</span> ls projects/
+        </div>
+        <div class="terminal-line">
+            binaural/ silicon-zen/ claude-ui/
+        </div>
         <div class="terminal-input-container">
             <span class="terminal-prompt">$</span>
             <input type="text" class="terminal-input" id="terminal-input" placeholder="" aria-label="Command input">
-            <span class="cursor"></span>
+            <!-- Removed the separate cursor span -->
         </div>
         <div id="command-response" class="command-response"></div>
     </section>
@@ -93,4 +102,16 @@ title: 1ps0 | Digital Outpost
             {% endfor %}
         </div>
     </section>
+
+    <footer>
+        <p>// 1ps0 // <span id="current-year">2025</span> //</p>
+        <div class="social-links">
+            <a href="https://github.com/1ps0" class="social-link" title="GitHub">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://bsky.app/profile/1ps0.bsky.social" class="social-link" title="Bluesky">
+                <i class="fas fa-cloud"></i>
+            </a>
+        </div>
+    </footer>
 </div>

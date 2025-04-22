@@ -13,26 +13,17 @@
     <link rel="stylesheet" href="{{ '/assets/css/professional.css' | relative_url }}">
 </head>
 <body>
-    <div class="noise"></div>
-    
-    <!-- Matrix canvas for header background -->
-    <canvas class="matrix-canvas" id="matrix-canvas"></canvas>
-    
-    <div class="content-wrapper">
-        <!-- Page content goes here -->
-        {{ content }}
+    <div class="page-container">
+        <!-- Background noise effect -->
+        <div class="noise"></div>
         
-        <footer>
-            <p>// 1ps0 // <span id="current-year">2025</span> //</p>
-            <div class="social-links">
-                <a href="https://github.com/1ps0" class="social-link" title="GitHub">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://bsky.app/profile/1ps0.bsky.social" class="social-link" title="Bluesky">
-                    <i class="fas fa-cloud"></i>
-                </a>
-            </div>
-        </footer>
+        <!-- Matrix canvas for header background -->
+        <canvas class="matrix-canvas" id="matrix-canvas"></canvas>
+        
+        <!-- Content scroll area -->
+        <div class="content-scroll-area">
+            {{ content }}
+        </div>
     </div>
 
     <!-- Theme toggle and matrix rain scripts -->
