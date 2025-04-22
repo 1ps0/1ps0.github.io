@@ -5,9 +5,8 @@ title: 1ps0 | Digital Outpost
 
 <div class="container">
     <header>
-        <!-- Scanlines effect only within header -->
+        <div class="header-scanlines"></div>
         <div class="header-content">
-            <div class="header-scanlines"></div>
             <h1 class="glitch-effect" data-text="1ps0">1ps0<span class="blink">_</span></h1>
             <p class="subtitle">> exploring the digital frontier</p>
         </div>
@@ -34,12 +33,12 @@ title: 1ps0 | Digital Outpost
         </div>
         <div class="terminal-input-container">
             <span class="terminal-prompt">$</span>
-            <input type="text" class="terminal-input" id="terminal-input" placeholder="" aria-label="Command input">
-
+            <div class="terminal-input-wrapper">
+                <input type="text" class="terminal-input" id="terminal-input" placeholder="" aria-label="Command input">
+                <span class="cursor"></span>
+            </div>
         </div>
-        <div id="command-response" class="command-response">
-            <span class="cursor"></span>
-        </div>
+        <div id="command-response" class="command-response"></div>
     </section>
 
     <section class="projects">

@@ -53,25 +53,6 @@ body {
     pointer-events: none;
 }
 
-/* Scanlines effect only for header */
-.header-scanlines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-    );
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.3;
-}
-
 .content-scroll-area {
     flex: 1;
     overflow-y: auto;
@@ -101,12 +82,11 @@ body {
     padding: 1.5rem;
     position: relative;
 }
-
 header {
     position: relative;
     padding: 2rem 0;
     margin-bottom: 2rem;
-    overflow: hidden;
+    overflow: hidden;  /* Prevents scanlines from spilling outside */
     border-bottom: 1px solid var(--terminal-green);
 }
 
@@ -114,6 +94,25 @@ header {
     position: relative;
     z-index: 2;
 }
+
+.header-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
+}
+
 
 .matrix-canvas {
     position: absolute;
