@@ -3,6 +3,17 @@ description: Exploring the digital frontier
 url: https://1ps0.github.io
 baseurl: ""
 
+include: ['_pages']
+
+default_theme: professional
+
+# Blog post categories
+category_types:
+  - professional
+  - creative
+  - technical
+  - personal
+
 # Build settings
 markdown: kramdown
 permalink: /blog/:title/
@@ -11,13 +22,6 @@ collections:
   posts:
     output: true
     permalink: /blog/:title/
-
-include: ['_pages']
-
-# Don't process these files
-exclude:
-  - README.md
-  - .gitignore
 
 defaults:
   - scope:
