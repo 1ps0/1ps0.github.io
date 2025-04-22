@@ -12,6 +12,13 @@ collections:
     output: true
     permalink: /blog/:title/
 
+include: ['_pages']
+
+# Don't process these files
+exclude:
+  - README.md
+  - .gitignore
+
 defaults:
   - scope:
       path: ""
