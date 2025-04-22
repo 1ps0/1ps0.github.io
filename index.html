@@ -24,9 +24,12 @@ title: 1ps0 | Digital Outpost
         <div class="terminal-line">
             Welcome to my digital outpost. This is where I showcase my projects and experiments.
         </div>
-        <div class="terminal-line">
-            <span class="terminal-prompt">$</span> ls projects/
+        <div class="terminal-input-container">
+            <span class="terminal-prompt">$</span>
+            <input type="text" class="terminal-input" id="terminal-input" placeholder="" aria-label="Command input">
+            <span class="cursor"></span>
         </div>
+        <div id="command-response" class="command-response"></div>
     </section>
 
     <section class="projects">

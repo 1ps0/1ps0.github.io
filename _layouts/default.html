@@ -15,26 +15,25 @@
 <body>
     <div class="noise"></div>
     
-    <!-- Theme toggle component -->
-    {% include theme-toggle.html %}
-    
     <!-- Matrix canvas for header background -->
     <canvas class="matrix-canvas" id="matrix-canvas"></canvas>
     
-    <!-- Page content goes here -->
-    {{ content }}
-    
-    <footer>
-        <p>// 1ps0 // <span id="current-year">2025</span> //</p>
-        <div class="social-links">
-            <a href="https://github.com/1ps0" class="social-link" title="GitHub">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="https://bsky.app/profile/1ps0.bsky.social" class="social-link" title="Bluesky">
-                <i class="fas fa-cloud"></i>
-            </a>
-        </div>
-    </footer>
+    <div class="content-wrapper">
+        <!-- Page content goes here -->
+        {{ content }}
+        
+        <footer>
+            <p>// 1ps0 // <span id="current-year">2025</span> //</p>
+            <div class="social-links">
+                <a href="https://github.com/1ps0" class="social-link" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://bsky.app/profile/1ps0.bsky.social" class="social-link" title="Bluesky">
+                    <i class="fas fa-cloud"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
 
     <!-- Theme toggle and matrix rain scripts -->
     <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>

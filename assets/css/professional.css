@@ -73,6 +73,19 @@
     color: var(--pro-text-color-dark);
 }
 
+/* Content area */
+.theme-professional .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow: hidden;
+}
+
+.theme-professional .container {
+    flex: 1;
+    overflow-y: auto;
+}
+
 /* Hide matrix canvas in professional mode */
 .theme-professional .matrix-canvas {
     display: none;
@@ -93,6 +106,8 @@
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
     margin-bottom: 2rem;
     border: 1px solid var(--pro-border-color-light);
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .theme-professional.dark-mode .terminal-section {
@@ -107,6 +122,24 @@
 
 .theme-professional.dark-mode .terminal-prompt {
     color: #3ba83b;
+}
+
+/* Terminal input styling */
+.theme-professional .terminal-input {
+    color: var(--pro-text-color-light);
+    font-family: var(--pro-font-mono);
+}
+
+.theme-professional.dark-mode .terminal-input {
+    color: var(--pro-text-color-dark);
+}
+
+.theme-professional .cursor {
+    background-color: var(--pro-accent-color);
+}
+
+.theme-professional.dark-mode .cursor {
+    background-color: #3ba83b;
 }
 
 /* Projects section */
@@ -341,7 +374,6 @@
     background-color: #f5f5f5;
     border-top: 1px solid var(--pro-border-color-light);
     padding: 2rem 0;
-    margin-top: 3rem;
 }
 
 .theme-professional.dark-mode footer {
@@ -421,41 +453,14 @@
     background-color: rgba(46, 166, 255, 0.1);
 }
 
-/* Command input styling for professional theme */
-.theme-professional .command-input-container {
-    background-color: #f5f5f5;
-    border: 1px solid #e0e0e0;
-}
-
-.theme-professional.dark-mode .command-input-container {
-    background-color: #252526;
-    border-color: #444;
-}
-
-.theme-professional .command-input {
-    color: #333;
-    font-family: var(--pro-font-mono);
-}
-
-.theme-professional.dark-mode .command-input {
-    color: #d4d4d4;
-}
-
-.theme-professional .command-submit {
-    color: var(--pro-primary-color);
-}
-
-.theme-professional.dark-mode .command-submit {
-    color: #2ea6ff;
-}
-
+/* Command response styling */
 .theme-professional .command-response {
-    background-color: var(--pro-primary-color);
-    color: white;
+    color: var(--pro-primary-color);
+    font-style: italic;
 }
 
 .theme-professional.dark-mode .command-response {
-    background-color: #0066b5;
+    color: #2ea6ff;
 }
 
 /* Blog categories and tags */

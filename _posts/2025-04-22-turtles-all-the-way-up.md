@@ -2,7 +2,7 @@
 layout: post
 title: "Turtles All the Way Up"
 date: 2025-04-22
-tags: [philosophy, consciousness, meta, recursion, humor]
+tags: [personal, philosophy, consciousness, meta, recursion, humor]
 ---
 
 ## The Original Human Research Project
