@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const terminalInput = document.getElementById('terminal-input');
     const commandResponse = document.getElementById('command-response');
     
+    // Command history
+    const commandHistory = [];
+    let historyIndex = -1;
+    
     // Initialize theme based on URL parameter or localStorage or default to professional
     function initializeTheme() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -38,50 +42,146 @@ document.addEventListener('DOMContentLoaded', function() {
         filterBlogPosts(theme);
     }
     
-    // Handle commands
+    // Enhanced command handler
     function handleCommand(command) {
-        command = command.toLowerCase().trim();
+        // Parse command and arguments
+        const parts = command.trim().split(' ');
+        const cmd = parts[0].toLowerCase();
+        const args = parts.slice(1);
         
-        switch(command) {
+        switch(cmd) {
             case 'darkmode':
                 setDarkMode(true);
                 return 'Dark mode activated.';
+                
             case 'lightmode':
                 setDarkMode(false);
                 return 'Light mode activated.';
+                
             case 'cyberpunk':
                 setTheme('cyberpunk');
                 return 'Cyberpunk theme activated.';
+                
             case 'professional':
                 setTheme('professional');
                 return 'Professional theme activated.';
+                
             case 'clear':
+            case 'reset':
                 return 'clear';
+                
             case 'help':
-                return 'Available commands: darkmode, lightmode, cyberpunk, professional, clear, help';
+                return `Available commands:
+- help            Show this help message
+- ls [directory]  List contents of directory
+- cd [directory]  Navigate to a project
+- cat [file]      Display file contents
+- whoami          Display user info
+- matrix          Toggle matrix effect
+- date            Show current date and time
+- echo [text]     Display text
+- cyberpunk       Switch to cyberpunk theme
+- professional    Switch to professional theme
+- darkmode        Switch to dark mode
+- lightmode       Switch to light mode
+- clear/reset     Clear terminal
+- github          Open GitHub profile
+- bluesky         Open Bluesky profile`;
+                
             case 'ls':
-                return 'binaural/ silicon-zen/ claude-ui/';
+                if (args[0] === 'projects' || args[0] === 'projects/') {
+                    return 'binaural/ silicon-zen/ claude-ui/';
+                } else if (args[0] === 'blog' || args[0] === 'blog/') {
+                    return 'turtles-all-the-way-up.md recent-thoughts.md ai-philosophy.md';
+                } else if (args.length === 0) {
+                    return 'projects/ blog/ about.txt contact.txt readme.md';
+                } else {
+                    return `ls: ${args[0]}: No such directory`;
+                }
+                
             case 'whoami':
                 return 'Developer, explorer, digital tinkerer.';
-            case 'cat about.txt':
-                return 'Welcome to my digital outpost. This is where I showcase my projects and experiments.';
-            default:
-                if (command.startsWith('cd ')) {
-                    const target = command.substr(3);
-                    if (target === 'binaural') {
-                        window.location.href = 'https://1ps0.github.io/binaural';
-                        return 'Navigating to binaural...';
-                    } else if (target === 'silicon-zen') {
-                        window.location.href = 'https://1ps0.github.io/silicon-zen';
-                        return 'Navigating to silicon-zen...';
-                    } else if (target === 'claude-ui') {
-                        window.location.href = 'https://1ps0.github.io/claude-ui';
-                        return 'Navigating to claude-ui...';
+                
+            case 'cat':
+                if (args.length === 0) {
+                    return 'Usage: cat [filename]';
+                }
+                
+                const files = {
+                    'about.txt': 'Welcome to my digital outpost. This is where I showcase my projects and experiments.',
+                    'contact.txt': 'GitHub: @1ps0\nBluesky: @1ps0.bsky.social',
+                    'readme.md': '# 1ps0 Digital Outpost\n\nThis site showcases my projects exploring the intersection of technology, consciousness, and human-AI collaboration.',
+                };
+                
+                if (files[args[0]]) {
+                    return files[args[0]];
+                } else {
+                    return `cat: ${args[0]}: No such file`;
+                }
+                
+            case 'matrix':
+                const canvas = document.getElementById('matrix-canvas');
+                if (canvas) {
+                    if (canvas.style.display === 'none') {
+                        canvas.style.display = 'block';
+                        return 'Matrix effect activated.';
                     } else {
-                        return `cd: ${target}: No such directory`;
+                        canvas.style.display = 'none';
+                        return 'Matrix effect deactivated.';
                     }
                 }
-                return `Command not found: ${command}. Try 'help' for available commands.`;
+                return 'Matrix effect not available.';
+                
+            case 'date':
+                return new Date().toLocaleString();
+                
+            case 'echo':
+                return args.join(' ');
+                
+            case 'github':
+                window.open('https://github.com/1ps0', '_blank');
+                return 'Opening GitHub profile...';
+                
+            case 'bluesky':
+                window.open('https://bsky.app/profile/1ps0.bsky.social', '_blank');
+                return 'Opening Bluesky profile...';
+                
+            case 'cd':
+                if (args.length === 0) {
+                    return 'Usage: cd [directory]';
+                }
+                
+                if (args[0] === 'binaural') {
+                    window.location.href = 'https://1ps0.github.io/binaural';
+                    return 'Navigating to binaural...';
+                } else if (args[0] === 'silicon-zen') {
+                    window.location.href = 'https://1ps0.github.io/silicon-zen';
+                    return 'Navigating to silicon-zen...';
+                } else if (args[0] === 'claude-ui') {
+                    window.location.href = 'https://1ps0.github.io/claude-ui';
+                    return 'Navigating to claude-ui...';
+                } else {
+                    return `cd: ${args[0]}: No such directory`;
+                }
+                
+            // Fun easter egg commands
+            case 'hack':
+                return 'ACCESS DENIED: Unauthorized access attempt detected and logged.';
+                
+            case '42':
+                return 'Indeed, that is the answer to the ultimate question of life, the universe, and everything.';
+                
+            case 'sudo':
+                return 'Permission granted. Just kidding, sudo doesn\'t work here!';
+                
+            case 'exit':
+                return 'There is no escape from the digital frontier...';
+                
+            default:
+                if (command.trim() === '') {
+                    return '';
+                }
+                return `Command not found: ${cmd}. Try 'help' for available commands.`;
         }
     }
     
@@ -112,13 +212,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Terminal input handler
+    // Terminal input handler with command history
     if (terminalInput) {
-        terminalInput.addEventListener('keypress', function(e) {
+        terminalInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
                 const command = terminalInput.value;
                 
                 if (command) {
+                    // Add to command history
+                    commandHistory.push(command);
+                    historyIndex = commandHistory.length;
+                    
                     // Create a new terminal line with the command
                     const cmdLineDiv = document.createElement('div');
                     cmdLineDiv.className = 'terminal-line visible';
@@ -133,10 +237,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (response !== 'clear') {
                         // Create a response line if it's not a clear command
-                        const responseDiv = document.createElement('div');
-                        responseDiv.className = 'terminal-line visible';
-                        responseDiv.textContent = response;
-                        inputContainer.parentNode.insertBefore(responseDiv, inputContainer);
+                        if (response) {
+                            const responseDiv = document.createElement('div');
+                            responseDiv.className = 'terminal-line visible';
+                            responseDiv.textContent = response;
+                            inputContainer.parentNode.insertBefore(responseDiv, inputContainer);
+                        }
                     } else {
                         // Clear all terminal lines except the input
                         const terminalLines = document.querySelectorAll('.terminal-section .terminal-line:not(.terminal-input-container)');
@@ -151,6 +257,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Scroll to bottom of terminal
                     const terminalSection = document.querySelector('.terminal-section');
                     terminalSection.scrollTop = terminalSection.scrollHeight;
+                }
+            } 
+            // Command history navigation
+            else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    terminalInput.value = commandHistory[historyIndex];
+                }
+            } 
+            else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    terminalInput.value = commandHistory[historyIndex];
+                } else if (historyIndex === commandHistory.length - 1) {
+                    historyIndex = commandHistory.length;
+                    terminalInput.value = '';
                 }
             }
         });
@@ -193,6 +317,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (input) input.focus();
             }
         }, 300 * (terminalLines.length + 1));
+    }
+    
+    // Make terminal input focus when clicking anywhere in the terminal section
+    const terminalSection = document.querySelector('.terminal-section');
+    if (terminalSection) {
+        terminalSection.addEventListener('click', function() {
+            if (terminalInput) {
+                terminalInput.focus();
+            }
+        });
     }
     
     // Initialize everything
