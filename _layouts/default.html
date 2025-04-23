@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Base styles for cyberpunk theme -->
+    <link rel="stylesheet" href="{{ '/assets/css/cyberpunk.css' | relative_url }}">
+
+    <!-- Professional theme styles -->
+    <link rel="stylesheet" href="{{ '/assets/css/professional.css' | relative_url }}">
+</head>
+<body>
+    <div class="page-container">
+        <!-- Background noise effect -->
+        <div class="noise"></div>
+
+        <!-- Content scroll area -->
+        <div class="content-scroll-area">
+            {{ content }}
+        </div>
+    </div>
+
+    <!-- Theme toggle and matrix rain scripts -->
+    <script src="{{ '/assets/js/theme.js' | relative_url }}"></script>
+    <script>
+        // Matrix rain effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const canvas = document.getElementById('matrix-canvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                const header = document.querySelector('header');
+                if (header) {
+                    canvas.height = header.offsetHeight;
+                } else {
+                    canvas.height = 200;
+                }
+            }
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            const chars = "01";
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+
+            for (let i = 0; i < columns; i++) {
+                drops[i] = Math.floor(Math.random() * -100);
+            }
+
+            function draw() {
+                ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.fillStyle = '#00ff41';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 33);
+
+            // Update current year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>
