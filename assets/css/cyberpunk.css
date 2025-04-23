@@ -33,11 +33,6 @@ body {
     position: relative;
 }
 
-/* Remove global scanlines (we'll add them only to header) */
-body::after {
-    display: none;
-}
-
 .page-container {
     display: flex;
     flex-direction: column;
@@ -182,6 +177,7 @@ h1 {
     margin-bottom: 0.5rem;
     opacity: 0;
     transition: opacity 0.5s ease;
+    white-space: pre-wrap;
 }
 
 .terminal-line.visible {
