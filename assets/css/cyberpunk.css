@@ -33,6 +33,11 @@ body {
     position: relative;
 }
 
+/* Remove global scanlines (we'll add them only to header) */
+body::after {
+    display: none;
+}
+
 .page-container {
     display: flex;
     flex-direction: column;
@@ -51,6 +56,25 @@ body {
     opacity: 0.05;
     z-index: 1;
     pointer-events: none;
+}
+
+/* Scanlines effect only for header */
+.header-scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15),
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.3;
 }
 
 .content-scroll-area {
@@ -83,27 +107,6 @@ body {
     position: relative;
 }
 
-/* Fix for the scanlines to be properly contained */
-body::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-    );
-    pointer-events: none;
-    z-index: 100;
-    opacity: 0.3;
-}
-
-/* Header has the matrix effect contained properly */
 header {
     position: relative;
     padding: 2rem 0;
@@ -116,64 +119,6 @@ header {
     position: relative;
     z-index: 2;
 }
-
-/* Terminal input and cursor styles */
-.terminal-input-container {
-    display: flex;
-    align-items: center;
-    margin-top: 1rem;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.terminal-input-container.visible {
-    opacity: 1;
-}
-
-.terminal-input {
-    background: transparent;
-    border: none;
-    color: var(--text-color);
-    font-family: var(--font-mono);
-    font-size: 1rem;
-    flex: 1;
-    padding: 0;
-    outline: none;
-}
-
-/* Simple cyberpunk blinking cursor */
-.cursor {
-    display: inline-block;
-    width: 10px;
-    height: 16px;
-    background-color: var(--terminal-green);
-    margin-left: 2px;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.header-scanlines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
-        transparent 1px,
-        transparent 2px
-    );
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.3;
-}
-
 
 .matrix-canvas {
     position: absolute;
@@ -246,6 +191,46 @@ h1 {
 .terminal-prompt {
     color: var(--terminal-green);
     margin-right: 0.5rem;
+}
+
+/* Command input integration */
+.terminal-input-container {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    position: relative;
+}
+
+.terminal-input-container.visible {
+    opacity: 1;
+}
+
+.terminal-input {
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    flex: 1;
+    padding: 0;
+    padding-right: 12px; /* Make room for cursor */
+    outline: none;
+    caret-color: transparent; /* Hide the default caret */
+}
+
+/* Cursor that sticks with the text */
+.cursor {
+    display: inline-block;
+    width: 10px;
+    height: 16px;
+    background-color: var(--terminal-green);
+    position: absolute;
+    left: calc(0.5rem + 1ch + 0.5rem + var(--cursor-pos, 0ch)); /* Position after $ prompt */
+    top: 50%;
+    transform: translateY(-50%);
+    animation: blink 1s infinite;
 }
 
 .projects-grid {

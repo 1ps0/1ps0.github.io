@@ -9,6 +9,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const commandHistory = [];
     let historyIndex = -1;
     
+    // Function to update cursor position based on input text
+    function updateCursorPosition() {
+        const input = document.getElementById('terminal-input');
+        if (!input) return;
+        
+        // Set a CSS variable to position cursor
+        const textWidth = input.value.length;
+        document.documentElement.style.setProperty('--cursor-pos', `${textWidth}ch`);
+    }
+    
     // Initialize theme based on URL parameter or localStorage or default to professional
     function initializeTheme() {
         const urlParams = new URLSearchParams(window.location.search);
@@ -42,12 +52,21 @@ document.addEventListener('DOMContentLoaded', function() {
         filterBlogPosts(theme);
     }
     
-    // Enhanced command handler
+    // Handle commands with enhanced output formatting
     function handleCommand(command) {
         // Parse command and arguments
         const parts = command.trim().split(' ');
         const cmd = parts[0].toLowerCase();
         const args = parts.slice(1);
+        
+        // Process special case for 'cat' command with multiple arguments
+        if (cmd === 'cat' && args.length > 0) {
+            const file = args.join(' ');
+            if (file === 'about.txt') {
+                return 'Welcome to my digital outpost. This is where I showcase my projects and experiments.';
+            }
+            return `cat: ${file}: No such file or directory`;
+        }
         
         switch(cmd) {
             case 'darkmode':
@@ -67,8 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 return 'Professional theme activated.';
                 
             case 'clear':
-            case 'reset':
                 return 'clear';
+                
+            case 'reset':
+                setTheme('professional');  // Reset to professional theme
+                return 'clear';  // And clear terminal
                 
             case 'help':
                 return `Available commands:
@@ -84,7 +106,8 @@ document.addEventListener('DOMContentLoaded', function() {
 - professional    Switch to professional theme
 - darkmode        Switch to dark mode
 - lightmode       Switch to light mode
-- clear/reset     Clear terminal
+- clear           Clear terminal
+- reset           Reset theme to professional
 - github          Open GitHub profile
 - bluesky         Open Bluesky profile`;
                 
@@ -101,23 +124,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             case 'whoami':
                 return 'Developer, explorer, digital tinkerer.';
-                
-            case 'cat':
-                if (args.length === 0) {
-                    return 'Usage: cat [filename]';
-                }
-                
-                const files = {
-                    'about.txt': 'Welcome to my digital outpost. This is where I showcase my projects and experiments.',
-                    'contact.txt': 'GitHub: @1ps0\nBluesky: @1ps0.bsky.social',
-                    'readme.md': '# 1ps0 Digital Outpost\n\nThis site showcases my projects exploring the intersection of technology, consciousness, and human-AI collaboration.',
-                };
-                
-                if (files[args[0]]) {
-                    return files[args[0]];
-                } else {
-                    return `cat: ${args[0]}: No such file`;
-                }
                 
             case 'matrix':
                 const canvas = document.getElementById('matrix-canvas');
@@ -163,20 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else {
                     return `cd: ${args[0]}: No such directory`;
                 }
-                
-            // Fun easter egg commands
-            case 'hack':
-                return 'ACCESS DENIED: Unauthorized access attempt detected and logged.';
-                
-            case '42':
-                return 'Indeed, that is the answer to the ultimate question of life, the universe, and everything.';
-                
-            case 'sudo':
-                return 'Permission granted. Just kidding, sudo doesn\'t work here!';
-                
-            case 'exit':
-                return 'There is no escape from the digital frontier...';
-                
+            
             default:
                 if (command.trim() === '') {
                     return '';
@@ -214,7 +207,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Terminal input handler with command history
     if (terminalInput) {
+        // Initialize cursor position
+        updateCursorPosition();
+        
+        // Update cursor position on input
+        terminalInput.addEventListener('input', updateCursorPosition);
+        
         terminalInput.addEventListener('keydown', function(e) {
+            // Update cursor on any key
+            setTimeout(updateCursorPosition, 0);
+            
             if (e.key === 'Enter') {
                 const command = terminalInput.value;
                 
@@ -238,10 +240,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (response !== 'clear') {
                         // Create a response line if it's not a clear command
                         if (response) {
-                            const responseDiv = document.createElement('div');
-                            responseDiv.className = 'terminal-line visible';
-                            responseDiv.textContent = response;
-                            inputContainer.parentNode.insertBefore(responseDiv, inputContainer);
+                            // Split multiline responses
+                            const responseLines = response.split('\n');
+                            responseLines.forEach(line => {
+                                const responseDiv = document.createElement('div');
+                                responseDiv.className = 'terminal-line visible';
+                                responseDiv.textContent = line;
+                                inputContainer.parentNode.insertBefore(responseDiv, inputContainer);
+                            });
                         }
                     } else {
                         // Clear all terminal lines except the input
@@ -254,30 +260,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Clear the input
                     terminalInput.value = '';
                     
+                    // Reset cursor position
+                    updateCursorPosition();
+                    
                     // Scroll to bottom of terminal
                     const terminalSection = document.querySelector('.terminal-section');
                     terminalSection.scrollTop = terminalSection.scrollHeight;
                 }
             } 
-            // Command history navigation
+            // Command history navigation - Up arrow
             else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 if (historyIndex > 0) {
                     historyIndex--;
                     terminalInput.value = commandHistory[historyIndex];
+                    updateCursorPosition(); // Update cursor after changing input
                 }
             } 
+            // Command history navigation - Down arrow
             else if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 if (historyIndex < commandHistory.length - 1) {
                     historyIndex++;
                     terminalInput.value = commandHistory[historyIndex];
+                    updateCursorPosition(); // Update cursor after changing input
                 } else if (historyIndex === commandHistory.length - 1) {
                     historyIndex = commandHistory.length;
                     terminalInput.value = '';
+                    updateCursorPosition(); // Update cursor after changing input
                 }
             }
         });
+        
+        // Make terminal input focus when clicking anywhere in the terminal section
+        const terminalSection = document.querySelector('.terminal-section');
+        if (terminalSection) {
+            terminalSection.addEventListener('click', function() {
+                terminalInput.focus();
+            });
+        }
     }
     
     // Filter blog posts based on current theme
@@ -317,16 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (input) input.focus();
             }
         }, 300 * (terminalLines.length + 1));
-    }
-    
-    // Make terminal input focus when clicking anywhere in the terminal section
-    const terminalSection = document.querySelector('.terminal-section');
-    if (terminalSection) {
-        terminalSection.addEventListener('click', function() {
-            if (terminalInput) {
-                terminalInput.focus();
-            }
-        });
     }
     
     // Initialize everything

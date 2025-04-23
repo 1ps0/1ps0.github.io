@@ -32,7 +32,8 @@
 
 /* Hide cyberpunk effects */
 .theme-professional .noise,
-.theme-professional body::after {
+.theme-professional body::after,
+.theme-professional .header-scanlines {
     display: none;
 }
 
@@ -108,12 +109,24 @@
     border: 1px solid var(--pro-border-color-light);
     max-height: 400px;
     overflow-y: auto;
+    /* Keep cyberpunk scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--terminal-green) var(--dark-accent) !important;
 }
 
 .theme-professional.dark-mode .terminal-section {
     background-color: var(--pro-card-bg-dark);
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
     border-color: var(--pro-border-color-dark);
+}
+
+/* Override scrollbar styles for terminal to keep the cyberpunk style */
+.theme-professional .terminal-section::-webkit-scrollbar-thumb {
+    background-color: var(--terminal-dim) !important;
+}
+
+.theme-professional .terminal-section::-webkit-scrollbar-track {
+    background: var(--dark-accent) !important;
 }
 
 .theme-professional .terminal-prompt {

@@ -5,6 +5,9 @@ title: 1ps0 | Digital Outpost
 
 <div class="container">
     <header>
+        <!-- Matrix canvas below scanlines but above background -->
+        <canvas class="matrix-canvas" id="matrix-canvas"></canvas>
+        <!-- Dedicated scanlines effect just for header -->
         <div class="header-scanlines"></div>
         <div class="header-content">
             <h1 class="glitch-effect" data-text="1ps0">1ps0<span class="blink">_</span></h1>
@@ -113,3 +116,52 @@ title: 1ps0 | Digital Outpost
         </div>
     </footer>
 </div>
+
+<script>
+    // Matrix rain effect
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = document.querySelector('header').offsetHeight;
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = "01";
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.floor(Math.random() * -100);
+        }
+
+        function draw() {
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#00ff41';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                drops[i]++;
+            }
+        }
+
+        setInterval(draw, 33);
+
+        // Update current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    });
+</script>
