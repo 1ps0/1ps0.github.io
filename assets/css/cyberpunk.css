@@ -1,8 +1,10 @@
 /* assets/css/cyberpunk.css */
+/* Cyberpunk theme specific styles - requires main.css */
+
 :root {
-    --main-bg-color: #0a0a0a;
-    --terminal-green: #00ff41;
-    --terminal-dim: #00992a;
+    --main-bg-color: #000000;
+    --terminal-green: #00ff00;
+    --terminal-dim: #00b800;
     --terminal-blue: #1a81ff;
     --terminal-cyan: #00e6e6;
     --dark-accent: #111;
@@ -12,36 +14,14 @@
     --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-    overflow: hidden; /* Prevent body scroll */
-}
-
-body {
+body.theme-cyberpunk {
     background-color: var(--main-bg-color);
     color: var(--text-color);
     font-family: var(--font-mono);
-    line-height: 1.6;
-    padding: 0;
-    margin: 0;
-    position: relative;
 }
 
-.page-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
-}
-
-.noise {
+/* Background effects */
+.theme-cyberpunk .noise {
     position: fixed;
     top: 0;
     left: 0;
@@ -54,7 +34,7 @@ body {
 }
 
 /* Scanlines effect only for header */
-.header-scanlines {
+.theme-cyberpunk .header-scanlines {
     position: absolute;
     top: 0;
     left: 0;
@@ -62,60 +42,36 @@ body {
     height: 100%;
     background: repeating-linear-gradient(
         0deg,
-        rgba(0, 0, 0, 0.15),
-        rgba(0, 0, 0, 0.15) 1px,
+        rgba(0, 0, 0, 0.25),
+        rgba(0, 0, 0, 0.25) 1px,
         transparent 1px,
         transparent 2px
     );
     pointer-events: none;
     z-index: 1;
-    opacity: 0.3;
+    opacity: 0.7;
 }
 
-.content-scroll-area {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    position: relative;
-    z-index: 2;
-    scrollbar-width: thin;
+/* Theme-specific scrollbar */
+.theme-cyberpunk .content-scroll-area {
     scrollbar-color: var(--light-accent) var(--main-bg-color);
 }
 
-.content-scroll-area::-webkit-scrollbar {
-    width: 8px;
-}
-
-.content-scroll-area::-webkit-scrollbar-track {
+.theme-cyberpunk .content-scroll-area::-webkit-scrollbar-track {
     background: var(--main-bg-color);
 }
 
-.content-scroll-area::-webkit-scrollbar-thumb {
+.theme-cyberpunk .content-scroll-area::-webkit-scrollbar-thumb {
     background-color: var(--light-accent);
     border-radius: 4px;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 1.5rem;
-    position: relative;
-}
-
-header {
-    position: relative;
-    padding: 2rem 0;
-    margin-bottom: 2rem;
-    overflow: hidden;
+/* Header styles */
+.theme-cyberpunk header {
     border-bottom: 1px solid var(--terminal-green);
 }
 
-.header-content {
-    position: relative;
-    z-index: 2;
-}
-
-.matrix-canvas {
+.theme-cyberpunk .matrix-canvas {
     position: absolute;
     top: 0;
     left: 0;
@@ -125,134 +81,192 @@ header {
     z-index: 1;
 }
 
-h1 {
-    font-size: 3rem;
-    margin-bottom: 0.75rem;
-    text-shadow: 0 0 10px var(--terminal-green);
+.theme-cyberpunk h1 {
+    text-shadow: 0 0 15px var(--terminal-green), 0 0 25px rgba(0, 255, 0, 0.5);
     color: var(--terminal-green);
     font-weight: normal;
 }
 
-.blink {
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-}
-
-.subtitle {
-    font-size: 1.1rem;
-    margin-bottom: 0.75rem;
+.theme-cyberpunk .subtitle {
     opacity: 0.8;
     color: var(--terminal-cyan);
 }
 
-.terminal-section {
-    margin-bottom: 2rem;
-    background-color: var(--dark-accent);
-    padding: 1.25rem;
+/* Terminal Section - Cyberpunk Theme */
+.theme-cyberpunk .terminal-section {
+    background-color: #000;
     border-left: 3px solid var(--terminal-green);
-    max-height: 400px;
-    overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: var(--terminal-green) var(--dark-accent);
+    scrollbar-color: var(--terminal-green) #0a0a0a;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2), inset 0 0 10px rgba(0, 255, 0, 0.1);
+    font-family: var(--font-mono);
 }
 
-.terminal-section::-webkit-scrollbar {
-    width: 6px;
+/* CRT scanline effect */
+.theme-cyberpunk .terminal-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.3),
+        rgba(0, 0, 0, 0.3) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    pointer-events: none;
+    opacity: 0.6;
+    z-index: 10;
+    animation: scanlines 10s linear infinite;
 }
 
-.terminal-section::-webkit-scrollbar-track {
-    background: var(--dark-accent);
+/* CRT flicker effect */
+.theme-cyberpunk .terminal-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 255, 0, 0.04);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 11;
+    animation: flicker 0.15s infinite;
 }
 
-.terminal-section::-webkit-scrollbar-thumb {
+@keyframes scanlines {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100px; }
+}
+
+@keyframes flicker {
+    0% { opacity: 0.1; }
+    5% { opacity: 0; }
+    10% { opacity: 0.1; }
+    15% { opacity: 0; }
+    20% { opacity: 0.1; }
+    25% { opacity: 0; }
+    30% { opacity: 0.1; }
+    35% { opacity: 0; }
+    40% { opacity: 0.1; }
+    45% { opacity: 0; }
+    50% { opacity: 0.1; }
+    55% { opacity: 0; }
+    60% { opacity: 0.1; }
+    100% { opacity: 0; }
+}
+
+.theme-cyberpunk .terminal-section::-webkit-scrollbar-track {
+    background: #0a0a0a;
+}
+
+.theme-cyberpunk .terminal-section::-webkit-scrollbar-thumb {
     background-color: var(--terminal-dim);
     border-radius: 3px;
 }
 
-.terminal-line {
-    margin-bottom: 0.25rem;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    line-height: 1.3;
-}
-
-.terminal-line.visible {
-    opacity: 1;
-}
-
-.terminal-prompt {
+.theme-cyberpunk .terminal-line {
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.8);
     color: var(--terminal-green);
-    margin-right: 0.5rem;
 }
 
-/* Command input integration */
-.terminal-input-container {
-    display: flex;
-    align-items: center;
-    margin-top: 0.5rem;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    position: relative;
+.theme-cyberpunk .terminal-line.visible {
+    animation: glitch-text 0.4s linear 1;
 }
 
-.terminal-input-container.visible {
-    opacity: 1;
+.theme-cyberpunk .terminal-prompt {
+    color: var(--terminal-green);
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--terminal-green);
 }
 
-.terminal-input {
-    background: transparent;
-    border: none;
-    color: var(--text-color);
+/* Cyberpunk terminal input */
+.theme-cyberpunk .terminal-input {
+    color: var(--terminal-green);
     font-family: var(--font-mono);
-    font-size: 1rem;
-    flex: 1;
-    padding: 0;
-    padding-right: 12px; /* Make room for cursor */
-    outline: none;
-    caret-color: transparent; /* Hide the default caret */
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
 }
 
-/* Cursor that sticks with the text */
-.cursor {
-    display: inline-block;
+/* Distinctive cyberpunk cursor */
+.theme-cyberpunk .cursor {
     width: 10px;
     height: 16px;
     background-color: var(--terminal-green);
-    position: absolute;
-    left: calc(0.5rem + 1ch + 0.5rem + var(--cursor-pos, 0ch)); /* Position after $ prompt */
-    top: 50%;
-    transform: translateY(-50%);
-    animation: blink 1s infinite;
+    animation: cursor-blink 1s infinite;
+    box-shadow: 0 0 10px var(--terminal-green);
 }
 
-.projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+@keyframes cursor-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
 }
 
-.project-card {
-    background-color: var(--dark-accent);
-    border: 1px solid var(--light-accent);
-    padding: 1.25rem;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    position: relative;
+/* Glitch text effect */
+@keyframes glitch-text {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+}
+
+/* Terminal startup animation */
+@keyframes terminal-startup {
+    0% { height: 2px; opacity: 0; }
+    5% { opacity: 1; }
+    95% { height: 2px; }
+    100% { height: 100%; }
+}
+
+.theme-cyberpunk .terminal-section.starting {
+    height: 2px;
+    animation: terminal-startup 1.2s ease-out forwards;
     overflow: hidden;
 }
 
-.project-card:hover {
+/* Command response styles */
+.theme-cyberpunk .command-response {
+    color: rgba(0, 255, 0, 0.9);
+}
+
+/* Error message style */
+.theme-cyberpunk .error-message {
+    color: #ff5555;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Success message style */
+.theme-cyberpunk .success-message {
+    color: #55ff55;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    animation: pulse 2s ease-out 1;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+/* Project cards */
+.theme-cyberpunk .project-card {
+    background-color: var(--dark-accent);
+    border: 1px solid var(--light-accent);
+    border-radius: 4px;
+}
+
+.theme-cyberpunk .project-card:hover {
     transform: translateY(-3px);
     box-shadow: 0 8px 16px rgba(0, 255, 65, 0.1);
     border-color: var(--terminal-green);
 }
 
-.project-card::before {
+.theme-cyberpunk .project-card::before {
     content: "";
     position: absolute;
     top: 0;
@@ -265,159 +279,92 @@ h1 {
     transition: transform 0.3s ease;
 }
 
-.project-card:hover::before {
+.theme-cyberpunk .project-card:hover::before {
     transform: scaleY(1);
 }
 
-.project-title {
-    font-size: 1.3rem;
-    margin-bottom: 0.75rem;
+.theme-cyberpunk .project-title {
     color: var(--terminal-green);
 }
 
-.project-description {
-    margin-bottom: 1.25rem;
-    opacity: 0.9;
-}
-
-.project-tech {
-    margin-bottom: 1.25rem;
-    font-size: 0.85rem;
+.theme-cyberpunk .project-tech {
     color: var(--terminal-blue);
 }
 
-.project-link {
-    display: inline-block;
-    padding: 0.4rem 0.8rem;
+.theme-cyberpunk .project-link {
     background-color: transparent;
     border: 1px solid var(--terminal-green);
     color: var(--terminal-green);
-    text-decoration: none;
     font-family: inherit;
-    transition: all 0.3s ease;
-    margin-right: 0.5rem;
-    margin-bottom: 0.5rem;
 }
 
-.project-link:hover {
+.theme-cyberpunk .project-link:hover {
     background-color: var(--terminal-green);
     color: var(--main-bg-color);
 }
 
-.section-heading {
+.theme-cyberpunk .section-heading {
     color: var(--terminal-green);
-    margin-bottom: 1.5rem;
     border-bottom: 1px solid var(--light-accent);
-    padding-bottom: 0.5rem;
 }
 
-.blog-section {
-    margin-top: 3rem;
-}
-
-.blog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
-}
-
-.blog-card {
+/* Blog cards */
+.theme-cyberpunk .blog-card {
     background-color: var(--dark-accent);
-    padding: 1.25rem;
     border-left: 3px solid var(--terminal-blue);
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
-    text-decoration: none;
     color: var(--text-color);
-    display: block;
 }
 
-.blog-card:hover {
+.theme-cyberpunk .blog-card:hover {
     transform: translateX(3px);
     border-left-color: var(--terminal-green);
 }
 
-.blog-date {
-    font-size: 0.8rem;
+.theme-cyberpunk .blog-date {
     color: var(--terminal-dim);
-    margin-bottom: 0.5rem;
 }
 
-.blog-title {
-    font-size: 1.3rem;
-    margin-bottom: 0.75rem;
+.theme-cyberpunk .blog-title {
     color: var(--terminal-blue);
 }
 
-.blog-card:hover .blog-title {
+.theme-cyberpunk .blog-card:hover .blog-title {
     color: var(--terminal-green);
 }
 
-.blog-summary {
-    margin-bottom: 1rem;
-    opacity: 0.9;
-}
-
-.blog-link {
+.theme-cyberpunk .blog-link {
     color: var(--terminal-cyan);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.3s ease;
 }
 
-.blog-link:hover {
+.theme-cyberpunk .blog-link:hover {
     color: var(--terminal-green);
 }
 
-.blog-link i {
-    margin-left: 0.5rem;
-    font-size: 0.8rem;
-}
-
-footer {
-    padding: 1.5rem;
-    text-align: center;
+/* Footer */
+.theme-cyberpunk footer {
     border-top: 1px solid var(--light-accent);
-    font-size: 0.9rem;
-    opacity: 0.7;
-    z-index: 5;
 }
 
-.social-links {
-    display: flex;
-    justify-content: center;
-    margin-top: 0.75rem;
-}
-
-.social-link {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    margin: 0 0.5rem;
+.theme-cyberpunk .social-link {
     border: 1px solid var(--light-accent);
     border-radius: 50%;
     color: var(--text-color);
-    text-decoration: none;
-    transition: all 0.3s ease;
 }
 
-.social-link:hover {
+.theme-cyberpunk .social-link:hover {
     border-color: var(--terminal-green);
     color: var(--terminal-green);
     transform: translateY(-3px);
 }
 
-.glitch-effect {
+/* Glitch effect */
+.theme-cyberpunk .glitch-effect {
     position: relative;
     display: inline-block;
 }
 
-.glitch-effect::before,
-.glitch-effect::after {
+.theme-cyberpunk .glitch-effect::before,
+.theme-cyberpunk .glitch-effect::after {
     content: attr(data-text);
     position: absolute;
     top: 0;
@@ -427,14 +374,14 @@ footer {
     opacity: 0.5;
 }
 
-.glitch-effect::before {
+.theme-cyberpunk .glitch-effect::before {
     color: #ff00ff;
     z-index: -1;
     animation: glitch-anim 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
     animation-delay: 0.5s;
 }
 
-.glitch-effect::after {
+.theme-cyberpunk .glitch-effect::after {
     color: #00ffff;
     z-index: -2;
     animation: glitch-anim 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
@@ -442,172 +389,10 @@ footer {
 }
 
 @keyframes glitch-anim {
-    0% {
-        transform: translate(0);
-    }
-    20% {
-        transform: translate(-2px, 2px);
-    }
-    40% {
-        transform: translate(-2px, -2px);
-    }
-    60% {
-        transform: translate(2px, 2px);
-    }
-    80% {
-        transform: translate(2px, -2px);
-    }
-    100% {
-        transform: translate(0);
-    }
-}
-
-/* Blog post styles */
-.blog-content {
-    background-color: var(--dark-accent);
-    padding: 2rem;
-    border-left: 3px solid var(--terminal-blue);
-    margin-bottom: 2rem;
-}
-
-.blog-content h1, .blog-content h2, .blog-content h3 {
-    color: var(--terminal-green);
-    margin: 1.5rem 0 1rem;
-}
-
-.blog-content p {
-    margin-bottom: 1.25rem;
-}
-
-.blog-content a {
-    color: var(--terminal-cyan);
-    text-decoration: none;
-    border-bottom: 1px dotted var(--terminal-cyan);
-}
-
-.blog-content a:hover {
-    color: var(--terminal-green);
-    border-bottom-color: var(--terminal-green);
-}
-
-.blog-content code {
-    background-color: var(--main-bg-color);
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-}
-
-.blog-content pre {
-    background-color: var(--main-bg-color);
-    padding: 1rem;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-}
-
-.blog-content blockquote {
-    border-left: 3px solid var(--terminal-dim);
-    padding-left: 1rem;
-    margin-left: 0;
-    color: var(--text-color);
-    opacity: 0.8;
-}
-
-.blog-content img {
-    max-width: 100%;
-    margin: 1.5rem 0;
-}
-
-.blog-header {
-    margin-bottom: 2rem;
-}
-
-.blog-meta {
-    font-size: 0.9rem;
-    color: var(--terminal-cyan);
-}
-
-.blog-meta span {
-    margin-right: 0.75rem;
-}
-
-.back-link {
-    display: inline-flex;
-    align-items: center;
-    color: var(--terminal-cyan);
-    text-decoration: none;
-    margin-bottom: 2rem;
-    transition: all 0.3s ease;
-}
-
-.back-link i {
-    margin-right: 0.5rem;
-}
-
-.back-link:hover {
-    color: var(--terminal-green);
-    transform: translateX(-3px);
-}
-
-.post-navigation {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 2rem;
-}
-
-.prev-post, .next-post {
-    color: var(--terminal-cyan);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.3s ease;
-    max-width: 45%;
-}
-
-.prev-post:hover, .next-post:hover {
-    color: var(--terminal-green);
-}
-
-.prev-post i {
-    margin-right: 0.5rem;
-}
-
-.next-post i {
-    margin-left: 0.5rem;
-}
-
-/* Response message styling */
-.command-response {
-    margin-top: 0.5rem;
-    color: var(--terminal-cyan);
-    font-style: italic;
-    opacity: 0;
-    animation: fadeIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-/* Hide non-professional blog posts in professional mode */
-.theme-professional .blog-card:not([data-categories*="professional"]) {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .projects-grid, .blog-grid {
-        grid-template-columns: 1fr;
-    }
-
-    h1 {
-        font-size: 2.2rem;
-    }
-
-    .container {
-        padding: 1rem;
-    }
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
 }

@@ -345,10 +345,14 @@ Options:
   --help          Display this command's help message
 
 WARNING: This command can permanently delete files from the filesystem.
+         In this interactive website, removing certain directories like
+         'projects/' and 'blog/' will hide those sections from the page.
 
 Examples:
   rm file.txt     Remove a file
   rm -r dir       Remove a directory and its contents
+  rm projects/    Hide the projects section from the page
+  rm blog/        Hide the blog section from the page
 `;
             case 'help':
                 return `
@@ -441,6 +445,21 @@ is temporary and will expire after some time.
 
 Options:
   --help          Display this command's help message
+`;
+            case 'http':
+                return `
+COMMAND: http - HTTP Server View
+
+Usage: http [options]
+
+Display a Python-like http.server directory listing view of the site.
+This command shows the site's filesystem structure in a browser-like interface.
+
+Options:
+  --help          Display this command's help message
+
+Examples:
+  http            Show directory listing for root
 `;
             default:
                 return `
@@ -552,6 +571,9 @@ For a list of all available commands and a brief description, run the help comma
 
             case 'help':
                 return handleHelpCommand(args, flags);
+
+            case 'http':
+                return handleHttpCommand(args, flags);
 
             default:
                 if (command.trim() === '') {
@@ -716,7 +738,225 @@ For a list of all available commands and a brief description, run the help comma
         // Save filesystem state
         saveFilesystemState();
         
+        // UI manipulation for system sections
+        if (targetName === 'projects') {
+            const projectsSection = document.querySelector('.projects');
+            if (projectsSection) {
+                projectsSection.style.display = 'none';
+                return `Removed ${targetPath} - Projects section hidden from view.`;
+            }
+        } else if (targetName === 'blog') {
+            const blogSection = document.querySelector('.blog-section');
+            if (blogSection) {
+                blogSection.style.display = 'none';
+                return `Removed ${targetPath} - Blog section hidden from view.`;
+            }
+        } else if (targetName === 'about.txt') {
+            const aboutContent = document.querySelector('.terminal-section');
+            if (aboutContent) {
+                const lines = aboutContent.querySelectorAll('.terminal-line');
+                lines.forEach(line => {
+                    if (line.textContent.includes('Welcome to my digital outpost')) {
+                        line.style.display = 'none';
+                    }
+                });
+                return `Removed ${targetPath} - About content hidden from view.`;
+            }
+        }
+        
         return `Removed ${targetPath}`;
+    }
+
+    // Handle http command to view the site like a directory listing
+    function handleHttpCommand(args, flags) {
+        // Check if we're in dark mode
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        
+        // Determine current path
+        let currentPath = args[0] || '/';
+        if (!currentPath.endsWith('/')) {
+            currentPath += '/';
+        }
+        
+        // Create a function to render the view for a given path
+        function renderView(path) {
+            let content = '';
+            let pathNode;
+            
+            if (path === '/') {
+                pathNode = filesystemState.filesystem;
+            } else {
+                const pathParts = path.split('/').filter(p => p !== '');
+                let currentNode = filesystemState.filesystem;
+                
+                for (const part of pathParts) {
+                    if (currentNode[part] && currentNode[part].type === 'directory') {
+                        currentNode = currentNode[part].contents;
+                    } else {
+                        return `<h2>Error: Path not found: ${path}</h2>`;
+                    }
+                }
+                
+                pathNode = currentNode;
+            }
+            
+            // Create a Python http.server-like view of the site
+            content = `<!DOCTYPE HTML>
+<html>
+<head>
+<title>Directory listing for ${path}</title>
+<style>
+body { 
+    font-family: monospace; 
+    background-color: ${isDarkMode ? '#1e1e1e' : '#ffffff'};
+    color: ${isDarkMode ? '#e0e0e0' : '#000000'};
+}
+h1 { 
+    border-bottom: 1px solid ${isDarkMode ? '#444444' : '#c0c0c0'}; 
+    margin-bottom: 10px; 
+    padding-bottom: 10px; 
+}
+ul { list-style-type: none; padding-left: 20px; }
+li { margin: 5px 0; }
+a { 
+    text-decoration: none; 
+    color: ${isDarkMode ? '#569cd6' : '#0000ee'}; 
+}
+a:visited { 
+    color: ${isDarkMode ? '#9e74d7' : '#551a8b'}; 
+}
+.directory { font-weight: bold; }
+.file-content {
+    background-color: ${isDarkMode ? '#252526' : '#f5f5f5'};
+    border: 1px solid ${isDarkMode ? '#444444' : '#cccccc'};
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    white-space: pre-wrap;
+}
+hr { border-color: ${isDarkMode ? '#444444' : '#c0c0c0'}; }
+.timestamp { 
+    font-size: 0.8em; 
+    color: ${isDarkMode ? '#888888' : '#666666'}; 
+}
+</style>
+</head>
+<body>
+<h1>Directory listing for ${path}</h1>
+<hr>
+`;
+
+            // Add parent directory link if not at root
+            if (path !== '/') {
+                const parentPath = path.split('/').slice(0, -2).join('/') + '/';
+                content += `<p><a href="#" data-path="${parentPath}">Parent Directory</a></p>`;
+            }
+
+            content += `<ul>`;
+
+            // List all directories and files in current path
+            for (const name in pathNode) {
+                const isDir = pathNode[name].type === 'directory';
+                if (isDir) {
+                    const itemPath = path + name + '/';
+                    content += `\n  <li><a href="#" class="directory" data-path="${itemPath}">${name}/</a></li>`;
+                } else {
+                    // For files, show a link that will display the file content
+                    content += `\n  <li><a href="#" class="file" data-file="${name}" data-path="${path}">${name}</a></li>`;
+                }
+            }
+
+            content += `\n</ul>
+<div id="file-content-display"></div>
+<hr>
+<p class="timestamp">Generated by 1ps0 Terminal HTTP Server at ${new Date().toISOString()}</p>
+</body>
+</html>`;
+
+            return content;
+        }
+        
+        // Function to handle file viewing
+        function showFileContent(filePath, fileName, container) {
+            const pathParts = filePath.split('/').filter(p => p !== '');
+            let currentNode = filesystemState.filesystem;
+            
+            // Navigate to the directory containing the file
+            for (const part of pathParts) {
+                if (currentNode[part] && currentNode[part].type === 'directory') {
+                    currentNode = currentNode[part].contents;
+                } else {
+                    container.innerHTML = `<div class="file-content">Error: File not found</div>`;
+                    return;
+                }
+            }
+            
+            // Get the file content
+            if (currentNode[fileName] && currentNode[fileName].type === 'file') {
+                const fileContent = currentNode[fileName].content;
+                container.innerHTML = `<h3>File: ${fileName}</h3><div class="file-content">${fileContent}</div>`;
+            } else {
+                container.innerHTML = `<div class="file-content">Error: File not found</div>`;
+            }
+        }
+
+        // Display in a modal-like overlay
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = isDarkMode ? 'rgba(30, 30, 30, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+        overlay.style.zIndex = '9999';
+        overlay.style.padding = '20px';
+        overlay.style.boxSizing = 'border-box';
+        overlay.style.overflow = 'auto';
+
+        // Add a close button
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Close';
+        closeBtn.style.position = 'fixed';
+        closeBtn.style.top = '10px';
+        closeBtn.style.right = '10px';
+        closeBtn.style.padding = '5px 10px';
+        closeBtn.style.backgroundColor = isDarkMode ? '#c75450' : '#f44336';
+        closeBtn.style.color = 'white';
+        closeBtn.style.border = 'none';
+        closeBtn.style.borderRadius = '4px';
+        closeBtn.style.cursor = 'pointer';
+        closeBtn.onclick = function() {
+            document.body.removeChild(overlay);
+        };
+
+        // Set the initial content
+        const content = document.createElement('div');
+        content.innerHTML = renderView(currentPath);
+        
+        // Add event delegation for directory and file clicks
+        content.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A') {
+                e.preventDefault();
+                
+                if (e.target.classList.contains('directory') || e.target.dataset.path) {
+                    // Navigate to directory
+                    const newPath = e.target.dataset.path;
+                    content.innerHTML = renderView(newPath);
+                } else if (e.target.classList.contains('file')) {
+                    // Show file content
+                    const filePath = e.target.dataset.path;
+                    const fileName = e.target.dataset.file;
+                    const fileContentDisplay = document.getElementById('file-content-display');
+                    showFileContent(filePath, fileName, fileContentDisplay);
+                }
+            }
+        });
+        
+        overlay.appendChild(closeBtn);
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+
+        return 'Serving HTTP directory listing...';
     }
 
     // Handle import command
@@ -1039,6 +1279,7 @@ Advanced Commands:
 - import                 Import filesystem
 - export                 Export filesystem
 - save                   Save current filesystem state
+- http                   Show Python-like directory listing
 
 For detailed information about a specific command, type:
   <command> --help  or  help <command>

@@ -6,10 +6,11 @@
     <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Base styles for cyberpunk theme -->
+    <!-- Common base styles -->
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+    
+    <!-- Theme-specific styles -->
     <link rel="stylesheet" href="{{ '/assets/css/cyberpunk.css' | relative_url }}">
-
-    <!-- Professional theme styles -->
     <link rel="stylesheet" href="{{ '/assets/css/professional.css' | relative_url }}">
 </head>
 <body>
