@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (args[0] === 'projects' || args[0] === 'projects/') {
                     return 'binaural/ silicon-zen/ claude-ui/';
                 } else if (args[0] === 'blog' || args[0] === 'blog/') {
-                    return 'turtles-all-the-way-up.md recent-thoughts.md ai-philosophy.md';
+                    return 'turtles-all-the-way-up.md';
                 } else if (args.length === 0) {
                     return 'projects/ blog/ about.txt contact.txt readme.md';
                 } else {
