@@ -9,6 +9,215 @@ document.addEventListener('DOMContentLoaded', function() {
     const commandHistory = [];
     let historyIndex = -1;
 
+    // Filesystem state
+    const filesystemState = {
+        filesystem: initializeFilesystem(),
+        currentDirectory: '/',
+        sudo: false,
+        themes: {}
+    };
+
+    // Function to initialize the filesystem with default content
+    function initializeFilesystem() {
+        // Check if there's a saved filesystem in localStorage
+        const savedFilesystem = localStorage.getItem('filesystem');
+        if (savedFilesystem) {
+            try {
+                return JSON.parse(savedFilesystem);
+            } catch (e) {
+                console.error('Error parsing saved filesystem:', e);
+                // Fall back to default filesystem
+            }
+        }
+
+        // Default filesystem structure
+        return {
+            projects: {
+                type: 'directory',
+                contents: {
+                    binaural: { 
+                        type: 'directory', 
+                        contents: {
+                            'README.md': { 
+                                type: 'file', 
+                                content: 'A browser-based application for playing binaural beats, solfeggio frequencies, and other therapeutic tones.'
+                            }
+                        } 
+                    },
+                    'silicon-zen': { 
+                        type: 'directory', 
+                        contents: {
+                            'README.md': { 
+                                type: 'file', 
+                                content: 'A collection of modern koans exploring the nature of large language models.'
+                            }
+                        } 
+                    },
+                    'claude-ui': { 
+                        type: 'directory', 
+                        contents: {
+                            'README.md': { 
+                                type: 'file', 
+                                content: 'A lightweight, standalone viewer for exported Claude AI responses and artifacts.'
+                            }
+                        } 
+                    }
+                }
+            },
+            blog: {
+                type: 'directory',
+                contents: {
+                    posts: { 
+                        type: 'directory', 
+                        contents: {
+                            'turtles-all-the-way-up.md': { 
+                                type: 'file', 
+                                content: '# Turtles All The Way Up\n\nA philosophical exploration of recursion in AI systems.'
+                            }
+                        }
+                    }
+                }
+            },
+            themes: {
+                type: 'directory',
+                contents: {
+                    'cyberpunk.css': { 
+                        type: 'file', 
+                        content: '/* CSS content for cyberpunk theme */'
+                    },
+                    'professional.css': { 
+                        type: 'file', 
+                        content: '/* CSS content for professional theme */' 
+                    }
+                }
+            },
+            'about.txt': { 
+                type: 'file', 
+                content: 'Welcome to my digital outpost. This is where I showcase my projects and experiments.'
+            },
+            'contact.txt': { 
+                type: 'file', 
+                content: 'GitHub: https://github.com/1ps0\nBluesky: https://bsky.app/profile/1ps0.bsky.social'
+            },
+            'readme.md': { 
+                type: 'file', 
+                content: '# 1ps0.github.io\n\nExploring the digital frontier. Use the terminal to navigate this site.\n\n## Getting Started\n\nThis site features an interactive terminal interface. Here are some tips for navigating:\n\n### Help System\n\nThere are two ways to get help:\n\n1. Use the `help` command for general assistance:\n   - `help` - Shows a complete list of available commands\n   - `help <command>` - Shows detailed help for a specific command\n\n2. Use the `--help` flag with any command for specific help:\n   - `ls --help` - Shows help for the ls command\n   - `cat --help` - Shows help for the cat command\n\n### Basic Navigation\n\n- `ls` - List files and directories\n- `cd [directory]` - Change to a directory\n- `pwd` - Show current location\n- `cat [file]` - Display file contents\n\nExplore and enjoy!'
+            },
+            'help-system.txt': {
+                type: 'file',
+                content: 'TERMINAL HELP SYSTEM\n\nThis terminal provides two ways to access help:\n\n1. General help command: "help"\n   - Shows a comprehensive overview of all available commands\n   - Can be used with a command name to get specific help: "help ls"\n\n2. Command-specific help flag: "--help"\n   - Add to any command to see its detailed documentation\n   - Example: "ls --help" or "cd --help"\n   - Provides detailed usage, options, and examples\n\nThe terminal help system is designed to be discoverable and easy to use, following Unix/Linux conventions while being user-friendly.\n\nExamples:\n- help        → General command overview\n- help cd     → Help for the cd command\n- ls --help   → Help for the ls command\n- pwd --help  → Help for the pwd command'
+            }
+        };
+    }
+
+    // Function to save the filesystem state to localStorage
+    function saveFilesystemState() {
+        localStorage.setItem('filesystem', JSON.stringify(filesystemState.filesystem));
+    }
+
+    // Path manipulation utilities
+    function normalizePath(path) {
+        // Handle absolute vs relative paths
+        let normalizedPath = path;
+        if (!path.startsWith('/')) {
+            // Relative path - combine with current directory
+            normalizedPath = filesystemState.currentDirectory === '/' 
+                ? '/' + path 
+                : filesystemState.currentDirectory + '/' + path;
+        }
+        
+        // Resolve . and .. components
+        const parts = normalizedPath.split('/').filter(p => p !== '');
+        const resolvedParts = [];
+        
+        for (const part of parts) {
+            if (part === '.') {
+                continue;
+            } else if (part === '..') {
+                resolvedParts.pop();
+            } else {
+                resolvedParts.push(part);
+            }
+        }
+        
+        return '/' + resolvedParts.join('/');
+    }
+
+    // Get a filesystem node at a given path
+    function getNodeAtPath(path) {
+        const normalizedPath = normalizePath(path);
+        if (normalizedPath === '/') {
+            return { node: filesystemState.filesystem, path: '/' };
+        }
+        
+        const parts = normalizedPath.split('/').filter(p => p !== '');
+        let current = filesystemState.filesystem;
+        let currentPath = '/';
+        
+        for (const part of parts) {
+            if (!current[part] || current[part].type !== 'directory') {
+                return null; // Path not found or not a directory
+            }
+            current = current[part].contents;
+            currentPath += part + '/';
+        }
+        
+        return { node: current, path: normalizedPath };
+    }
+
+    // Command parser with flag support
+    function parseCommand(input) {
+        // Extract sudo prefix if present
+        const hasSudo = input.trim().startsWith('sudo ');
+        if (hasSudo) {
+            input = input.substring(5);
+        }
+        
+        // Split input into parts
+        const parts = input.trim().split(' ');
+        const command = parts[0].toLowerCase();
+        const args = parts.slice(1);
+        
+        // Check for --help flag with top priority
+        if (args.includes('--help')) {
+            return {
+                command,
+                args: [],
+                flags: { help: true },
+                sudo: hasSudo
+            };
+        }
+        
+        // Parse remaining flags
+        const flags = {};
+        const cleanArgs = [];
+        
+        for (let i = 0; i < args.length; i++) {
+            const arg = args[i];
+            if (arg.startsWith('--')) {
+                // Long flag
+                const flagName = arg.substring(2);
+                flags[flagName] = true;
+            } else if (arg.startsWith('-') && arg.length > 1) {
+                // Short flag(s)
+                const shortFlags = arg.substring(1).split('');
+                shortFlags.forEach(flag => {
+                    flags[flag] = true;
+                });
+            } else {
+                // Regular argument
+                cleanArgs.push(arg);
+            }
+        }
+        
+        return {
+            command,
+            args: cleanArgs,
+            flags,
+            sudo: hasSudo
+        };
+    }
+
     // Function to update cursor position based on input text
     function updateCursorPosition() {
         const input = document.getElementById('terminal-input');
@@ -52,23 +261,245 @@ document.addEventListener('DOMContentLoaded', function() {
         filterBlogPosts(theme);
     }
 
-    // Handle commands with enhanced output formatting
-    function handleCommand(command) {
-        // Parse command and arguments
-        const parts = command.trim().split(' ');
-        const cmd = parts[0].toLowerCase();
-        const args = parts.slice(1);
+    // Generate help text based on command
+    function getHelpText(command) {
+        switch (command) {
+            case 'ls':
+                return `
+COMMAND: ls - List directory contents
 
-        // Process special case for 'cat' command with multiple arguments
-        if (cmd === 'cat' && args.length > 0) {
-            const file = args.join(' ');
-            if (file === 'about.txt') {
-                return 'Welcome to my digital outpost. This is where I showcase my projects and experiments.';
-            }
-            return `cat: ${file}: No such file or directory`;
+Usage: ls [options] [directory]
+
+List directory contents.
+
+Options:
+  -a, --all       Do not ignore entries starting with .
+  -l              Use a long listing format
+  --help          Display this help message
+
+Examples:
+  ls              List current directory contents
+  ls -l           List in long format with details
+  ls -a           List all files including hidden ones
+  ls projects     List contents of projects directory
+`;
+            case 'cd':
+                return `
+COMMAND: cd - Change directory
+
+Usage: cd [directory]
+
+Change the current directory.
+
+Arguments:
+  directory       Directory to change to
+                  If no directory is specified, returns to root
+  ..              Move up one directory level
+  .               Current directory (no change)
+
+Options:
+  --help          Display this command's help message
+
+Examples:
+  cd              Return to root directory
+  cd projects     Go to projects directory
+  cd ..           Go up one directory level
+`;
+            case 'cat':
+                return `
+COMMAND: cat - Display file contents
+
+Usage: cat [options] <file>
+
+Display the contents of a file.
+
+Options:
+  --help          Display this command's help message
+
+Examples:
+  cat readme.md   Display the content of readme.md
+  cat about.txt   Show the about text file
+`;
+            case 'pwd':
+                return `
+COMMAND: pwd - Print working directory
+
+Usage: pwd [options]
+
+Print the current working directory.
+
+Options:
+  --help          Display this command's help message
+`;
+            case 'rm':
+                return `
+COMMAND: rm - Remove files
+
+Usage: rm [options] <file/directory>
+
+Remove files or directories.
+
+Options:
+  -r, --recursive Remove directories and their contents recursively
+  -f, --force     Force removal without confirmation
+  --help          Display this command's help message
+
+WARNING: This command can permanently delete files from the filesystem.
+
+Examples:
+  rm file.txt     Remove a file
+  rm -r dir       Remove a directory and its contents
+`;
+            case 'help':
+                return `
+COMMAND: help - Get help information
+
+Usage: help [command]
+
+Display help information for all commands or for a specific command.
+
+Arguments:
+  command         Show detailed help for the specified command
+
+Examples:
+  help            Show general command help
+  help ls         Show detailed help for the ls command
+  help cd         Show detailed help for the cd command
+
+Note: You can also use the --help flag with any command to get help
+      for that specific command (e.g., ls --help).
+`;
+            case 'import':
+                return `
+COMMAND: import - Import a CSS theme
+
+Usage: import <themefile.css> [options]
+
+Import a CSS theme file and apply it to the site.
+
+Options:
+  --validate      Validate CSS before applying
+  --temp          Apply temporarily without saving
+  --help          Display this command's help message
+`;
+            case 'export':
+                return `
+COMMAND: export - Export current theme
+
+Usage: export <themefile.css> [options]
+
+Export the current theme as a CSS file.
+
+Options:
+  --help          Display this command's help message
+`;
+            case 'save':
+                return `
+COMMAND: save - Save current state
+
+Usage: save [options]
+
+Save the current filesystem state to localStorage.
+
+Options:
+  --help          Display this command's help message
+`;
+            case 'clear':
+                return `
+COMMAND: clear - Clear terminal
+
+Usage: clear [options]
+
+Clear the terminal screen.
+
+Options:
+  --help          Display this command's help message
+`;
+            case 'matrix':
+                return `
+COMMAND: matrix - Toggle matrix effect
+
+Usage: matrix [options]
+
+Toggle the matrix effect on/off.
+
+Options:
+  --on            Force matrix effect on
+  --off           Force matrix effect off
+  --help          Display this command's help message
+`;
+            case 'sudo':
+                return `
+COMMAND: sudo - Elevated privileges
+
+Usage: sudo <command>
+
+Execute command with elevated privileges.
+
+Some operations require sudo privileges. The sudo access
+is temporary and will expire after some time.
+
+Options:
+  --help          Display this command's help message
+`;
+            default:
+                return `
+Command '${command}' does not have specific help documentation.
+
+For general help on available commands, type: help
+
+For a list of all available commands and a brief description, run the help command.
+`;
+        }
+    }
+
+    // Handle commands with enhanced output formatting
+    function handleCommand(commandInput) {
+        // Parse command input
+        const parsedCommand = parseCommand(commandInput);
+        const { command, args, flags, sudo } = parsedCommand;
+
+        // Handle sudo authorization if needed
+        if (sudo && !filesystemState.sudo) {
+            // For simplicity, we'll just grant sudo without a password
+            filesystemState.sudo = true;
+            setTimeout(() => {
+                // Sudo expires after 5 minutes
+                filesystemState.sudo = false;
+            }, 300000);
         }
 
-        switch(cmd) {
+        // Handle help flag with top priority
+        if (flags.help) {
+            return getHelpText(command);
+        }
+
+        // Process command
+        switch(command) {
+            case 'ls':
+                return handleLsCommand(args, flags);
+
+            case 'cd':
+                return handleCdCommand(args, flags);
+
+            case 'pwd':
+                return filesystemState.currentDirectory;
+
+            case 'cat':
+                return handleCatCommand(args, flags);
+
+            case 'rm':
+                return handleRmCommand(args, flags);
+
+            case 'import':
+                return handleImportCommand(args, flags);
+
+            case 'export':
+                return handleExportCommand(args, flags);
+
+            case 'save':
+                return handleSaveCommand(args, flags);
+
             case 'darkmode':
                 setDarkMode(true);
                 return 'Dark mode activated.';
@@ -86,6 +517,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return 'Professional theme activated.';
 
             case 'clear':
+                if (args.length > 0) {
+                    return handleClearCommand(args, flags);
+                }
                 return 'clear';
 
             case 'reset':
@@ -93,51 +527,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 setDarkMode(false);        // Reset to light mode
                 return 'clear';  // And clear terminal
 
-            case 'help':
-                return `Available commands:
-- help            Show this help message
-- ls [directory]  List contents of directory
-- cd [directory]  Navigate to a project
-- cat [file]      Display file contents
-- whoami          Display user info
-- matrix          Toggle matrix effect
-- date            Show current date and time
-- echo [text]     Display text
-- cyberpunk       Switch to cyberpunk theme
-- professional    Switch to professional theme
-- darkmode        Switch to dark mode
-- lightmode       Switch to light mode
-- clear           Clear terminal
-- reset           Reset theme to professional
-- github          Open GitHub profile
-- bluesky         Open Bluesky profile`;
-
-            case 'ls':
-                if (args[0] === 'projects' || args[0] === 'projects/') {
-                    return 'binaural/ silicon-zen/ claude-ui/';
-                } else if (args[0] === 'blog' || args[0] === 'blog/') {
-                    return 'turtles-all-the-way-up.md';
-                } else if (args.length === 0) {
-                    return 'projects/ blog/ about.txt contact.txt readme.md';
-                } else {
-                    return `ls: ${args[0]}: No such directory`;
-                }
-
             case 'whoami':
                 return 'Developer, explorer, digital tinkerer.';
 
             case 'matrix':
-                const canvas = document.getElementById('matrix-canvas');
-                if (canvas) {
-                    if (canvas.style.display === 'none') {
-                        canvas.style.display = 'block';
-                        return 'Matrix effect activated.';
-                    } else {
-                        canvas.style.display = 'none';
-                        return 'Matrix effect deactivated.';
-                    }
-                }
-                return 'Matrix effect not available.';
+                return handleMatrixCommand(args, flags);
 
             case 'date':
                 return new Date().toLocaleString();
@@ -153,30 +547,285 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.open('https://bsky.app/profile/1ps0.bsky.social', '_blank');
                 return 'Opening Bluesky profile...';
 
-            case 'cd':
-                if (args.length === 0) {
-                    return 'Usage: cd [directory]';
-                }
+            case 'shutdown':
+                return handleShutdownCommand(args, flags);
 
-                if (args[0] === 'binaural') {
-                    window.location.href = 'https://1ps0.github.io/binaural';
-                    return 'Navigating to binaural...';
-                } else if (args[0] === 'silicon-zen') {
-                    window.location.href = 'https://1ps0.github.io/silicon-zen';
-                    return 'Navigating to silicon-zen...';
-                } else if (args[0] === 'claude-ui') {
-                    window.location.href = 'https://1ps0.github.io/claude-ui';
-                    return 'Navigating to claude-ui...';
-                } else {
-                    return `cd: ${args[0]}: No such directory`;
-                }
+            case 'help':
+                return handleHelpCommand(args, flags);
 
             default:
                 if (command.trim() === '') {
                     return '';
                 }
-                return `Command not found: ${cmd}. Try 'help' for available commands.`;
+                return `Command not found: ${command}. Try 'help' for available commands.`;
         }
+    }
+
+    // Handle ls command
+    function handleLsCommand(args, flags) {
+        let targetPath = filesystemState.currentDirectory;
+        if (args.length > 0) {
+            targetPath = args[0];
+        }
+
+        const pathInfo = getNodeAtPath(targetPath);
+        if (!pathInfo) {
+            return `ls: ${targetPath}: No such directory`;
+        }
+
+        // Convert the node's contents to an array of entries
+        const contents = [];
+        for (const name in pathInfo.node) {
+            // Skip hidden files unless -a or --all flag is used
+            if (!flags.a && !flags.all && name.startsWith('.')) {
+                continue;
+            }
+
+            const item = pathInfo.node[name];
+            if (flags.l) {
+                // Long format
+                const type = item.type === 'directory' ? 'd' : '-';
+                const permissions = 'rwxr-xr-x';
+                const owner = '1ps0';
+                const size = item.type === 'file' ? (item.content.length + ' B') : '-';
+                const date = new Date().toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                // For directories, add a trailing slash
+                const displayName = item.type === 'directory' ? name + '/' : name;
+                
+                contents.push(`${type}${permissions} ${owner} ${size.padStart(8)} ${date} ${displayName}`);
+            } else {
+                // Simple format
+                contents.push(item.type === 'directory' ? name + '/' : name);
+            }
+        }
+
+        return contents.join('\n');
+    }
+
+    // Handle cd command
+    function handleCdCommand(args, flags) {
+        if (args.length === 0) {
+            // No arguments, go to root
+            filesystemState.currentDirectory = '/';
+            return '';
+        }
+
+        const targetPath = args[0];
+        
+        // Special case for binaural, silicon-zen, and claude-ui
+        if (targetPath === 'binaural') {
+            window.location.href = 'https://1ps0.github.io/binaural';
+            return 'Navigating to binaural...';
+        } else if (targetPath === 'silicon-zen') {
+            window.location.href = 'https://1ps0.github.io/silicon-zen';
+            return 'Navigating to silicon-zen...';
+        } else if (targetPath === 'claude-ui') {
+            window.location.href = 'https://1ps0.github.io/claude-ui';
+            return 'Navigating to claude-ui...';
+        }
+
+        // Handle normal filesystem navigation
+        const normalizedPath = normalizePath(targetPath);
+        const pathInfo = getNodeAtPath(normalizedPath);
+        
+        if (!pathInfo) {
+            return `cd: ${targetPath}: No such directory`;
+        }
+        
+        // Update current directory
+        filesystemState.currentDirectory = pathInfo.path;
+        return '';
+    }
+
+    // Handle cat command
+    function handleCatCommand(args, flags) {
+        if (args.length === 0) {
+            return 'Usage: cat [file]';
+        }
+
+        const filePath = args.join(' ');
+        const normalizedPath = normalizePath(filePath);
+        
+        // Parse the path to extract directory and filename
+        const parts = normalizedPath.split('/').filter(p => p !== '');
+        const filename = parts.pop();
+        const dirPath = '/' + parts.join('/');
+        
+        const dirInfo = getNodeAtPath(dirPath);
+        if (!dirInfo) {
+            return `cat: ${filePath}: No such file or directory`;
+        }
+        
+        if (!dirInfo.node[filename]) {
+            return `cat: ${filePath}: No such file`;
+        }
+        
+        const file = dirInfo.node[filename];
+        if (file.type !== 'file') {
+            return `cat: ${filePath}: Is a directory`;
+        }
+        
+        return file.content;
+    }
+
+    // Handle rm command
+    function handleRmCommand(args, flags) {
+        if (args.length === 0) {
+            return 'Usage: rm [options] <file/directory>';
+        }
+
+        const targetPath = args[0];
+        const normalizedPath = normalizePath(targetPath);
+        
+        // Parse the path to extract directory and filename
+        const parts = normalizedPath.split('/').filter(p => p !== '');
+        const targetName = parts.pop();
+        const dirPath = '/' + parts.join('/');
+        
+        const dirInfo = getNodeAtPath(dirPath);
+        if (!dirInfo) {
+            return `rm: ${targetPath}: No such file or directory`;
+        }
+        
+        if (!dirInfo.node[targetName]) {
+            return `rm: ${targetPath}: No such file or directory`;
+        }
+        
+        const target = dirInfo.node[targetName];
+        
+        // Check if target is a directory and if recursive flag is set
+        if (target.type === 'directory' && !flags.r && !flags.recursive) {
+            return `rm: ${targetPath}: is a directory (use -r to remove)`;
+        }
+        
+        // Check if sudo is required (for system directories/files)
+        const systemPaths = ['projects', 'blog', 'themes'];
+        if (systemPaths.includes(targetName) && !filesystemState.sudo) {
+            return `rm: ${targetPath}: Permission denied (use sudo)`;
+        }
+        
+        // Remove the target
+        delete dirInfo.node[targetName];
+        
+        // Save filesystem state
+        saveFilesystemState();
+        
+        return `Removed ${targetPath}`;
+    }
+
+    // Handle import command
+    function handleImportCommand(args, flags) {
+        if (args.length === 0) {
+            return 'Usage: import <themefile.css>';
+        }
+        
+        // In a real implementation, this would allow importing a custom theme
+        // For simplicity, we'll just return a message
+        return 'Import functionality not fully implemented yet. Coming soon!';
+    }
+
+    // Handle export command
+    function handleExportCommand(args, flags) {
+        if (args.length === 0) {
+            return 'Usage: export <themefile.css>';
+        }
+        
+        // In a real implementation, this would export the current theme
+        // For simplicity, we'll just return a message
+        return 'Export functionality not fully implemented yet. Coming soon!';
+    }
+
+    // Handle save command
+    function handleSaveCommand(args, flags) {
+        if (args.length === 0) {
+            return 'Usage: save <themefile.css>';
+        }
+        
+        // In a real implementation, this would save a theme to localStorage
+        // For simplicity, we'll just return a message
+        return 'Save functionality not fully implemented yet. Coming soon!';
+    }
+
+    // Handle clear command for theme clearing
+    function handleClearCommand(args, flags) {
+        if (flags.storage) {
+            // Clear theme from localStorage
+            return 'Theme cleared from storage.';
+        }
+        
+        // If no storage flag, just clear the terminal
+        return 'clear';
+    }
+
+    // Handle matrix command
+    function handleMatrixCommand(args, flags) {
+        const canvas = document.getElementById('matrix-canvas');
+        if (!canvas) {
+            return 'Matrix effect not available.';
+        }
+        
+        if (flags.on) {
+            canvas.style.display = 'block';
+            return 'Matrix effect activated.';
+        } else if (flags.off) {
+            canvas.style.display = 'none';
+            return 'Matrix effect deactivated.';
+        } else {
+            // Toggle
+            if (canvas.style.display === 'none') {
+                canvas.style.display = 'block';
+                return 'Matrix effect activated.';
+            } else {
+                canvas.style.display = 'none';
+                return 'Matrix effect deactivated.';
+            }
+        }
+    }
+
+    // Handle shutdown command
+    function handleShutdownCommand(args, flags) {
+        // Create shutdown effect
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = '#000';
+        overlay.style.color = '#fff';
+        overlay.style.display = 'flex';
+        overlay.style.alignItems = 'center';
+        overlay.style.justifyContent = 'center';
+        overlay.style.zIndex = '9999';
+        overlay.style.opacity = '0';
+        overlay.style.transition = 'opacity 1s ease';
+        overlay.textContent = 'System shutting down...';
+        
+        document.body.appendChild(overlay);
+        
+        // Fade in
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+        }, 10);
+        
+        // Wait and then fade out
+        setTimeout(() => {
+            overlay.textContent = 'System halted.';
+            setTimeout(() => {
+                overlay.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(overlay);
+                }, 1000);
+            }, 2000);
+        }, 2000);
+        
+        return 'Initiating shutdown sequence...';
     }
 
     function setDarkMode(isDark) {
@@ -339,6 +988,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (input) input.focus();
             }
         }, 300 * (terminalLines.length + 1));
+    }
+
+    // Function to handle the general help command
+    function handleHelpCommand(args, flags) {
+        // If specific command help is requested, show that command's help
+        if (args.length > 0) {
+            const targetCommand = args[0];
+            return getHelpText(targetCommand);
+        }
+        
+        // Otherwise show general help overview
+        return `
+1ps0.github.io Terminal Interface
+================================
+
+COMMAND REFERENCE:
+
+Navigation:
+- pwd                    Print working directory
+- ls [directory]         List contents of directory
+- cd [directory]         Change directory
+
+File Operations:
+- cat <file>             Display file contents
+- rm <file/directory>    Remove file or directory
+
+System Commands:
+- clear                  Clear terminal
+- help                   Show this help message
+- whoami                 Display user info
+- date                   Show current date and time
+- echo <message>         Display a message
+
+Theme Control:
+- cyberpunk              Switch to cyberpunk theme
+- professional           Switch to professional theme
+- darkmode               Switch to dark mode
+- lightmode              Switch to light mode
+- reset                  Reset theme to professional
+
+External Links:
+- github                 Open GitHub profile
+- bluesky                Open Bluesky profile
+
+Advanced Commands:
+- matrix                 Toggle matrix effect
+- shutdown               Simulate shutdown
+- sudo <command>         Execute with elevated privileges
+- import                 Import filesystem
+- export                 Export filesystem
+- save                   Save current filesystem state
+
+For detailed information about a specific command, type:
+  <command> --help  or  help <command>
+`;
     }
 
     // Initialize everything

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Feature Tests</title>
+    
+    <!-- Include site styles -->
+    <link rel="stylesheet" href="../assets/css/cyberpunk.css">
+    <link rel="stylesheet" href="../assets/css/professional.css">
+    
+    <style>
+        body {
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .test-header {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #232323;
+            color: #f0f0f0;
+        }
+        
+        .terminal-section {
+            margin-bottom: 20px;
+            background-color: var(--dark-accent);
+            padding: 1.25rem;
+            border-left: 3px solid var(--terminal-green);
+            height: 50vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .terminal-output {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .terminal-input-container {
+            position: sticky;
+            bottom: 0;
+            background-color: inherit;
+        }
+        
+        .notes {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .dark-mode .notes {
+            background: #333;
+            color: #eee;
+        }
+        
+        #debug-info {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.2;
+        }
+        
+        #debug-info div {
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Additional terminal styling overrides for test page */
+        .terminal-line {
+            margin-bottom: 0.15rem;
+            line-height: 1.2;
+        }
+        
+        /* Test results styling */
+        .test-result {
+            padding: 2px 6px;
+            margin-bottom: 2px;
+            font-size: 13px;
+            border-left: 3px solid;
+        }
+        
+        .test-result.passed {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .test-result.failed {
+            border-color: #F44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+        
+        .test-summary {
+            margin-top: 8px;
+            padding: 5px;
+            background: #232323;
+            color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="theme-cyberpunk">
+    <div class="test-header">
+        <h1>Terminal Tests</h1>
+        <p>Testing the terminal filesystem implementation without exposing internal functions.</p>
+        
+        <div>
+            <button id="toggle-theme">Toggle Theme</button>
+            <button id="toggle-dark-mode">Toggle Dark Mode</button>
+            <button id="run-all-tests">Run All Tests</button>
+        </div>
+    </div>
+    
+    <!-- Copy of the terminal section -->
+    <section class="terminal-section">
+        <div class="terminal-output">
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> whoami
+            </div>
+            <div class="terminal-line">
+                Developer, explorer, digital tinkerer.
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> ls
+            </div>
+            <div class="terminal-line">
+                projects/ blog/ themes/ about.txt contact.txt readme.md
+            </div>
+        </div>
+        <div class="terminal-input-container">
+            <span class="terminal-prompt">$</span>
+            <input type="text" class="terminal-input" id="terminal-input" placeholder="" aria-label="Command input">
+            <span class="cursor"></span>
+        </div>
+        <div id="command-response" class="command-response"></div>
+    </section>
+    
+    <div class="notes">
+        <h3>Test Notes</h3>
+        <ul>
+            <li>Tests run in a separate environment from the main site</li>
+            <li>No internal functions are exposed or modified</li>
+            <li>Tests interact with the terminal through the UI only</li>
+            <li>Use the "Run All Tests" button to start the test suite</li>
+        </ul>
+        
+        <div id="debug-info" style="margin-top: 15px; font-family: monospace; background: #333; color: #eee; padding: 10px;">
+            <h4>Debug Information</h4>
+            <p>Console output will appear here</p>
+        </div>
+    </div>
+    
+    <!-- Import production code -->
+    <script src="../assets/js/theme.js"></script>
+    
+    <!-- Import test-only wrapper that doesn't modify production code -->
+    <script src="terminal-test-wrapper.js"></script>
+    
+    <!-- Import actual tests -->
+    <script src="terminal-tests.js"></script>
+    
+    <script>
+        // Initialize theme toggles
+        document.getElementById('toggle-theme').addEventListener('click', function() {
+            const body = document.body;
+            if (body.classList.contains('theme-cyberpunk')) {
+                body.classList.remove('theme-cyberpunk');
+                body.classList.add('theme-professional');
+            } else {
+                body.classList.remove('theme-professional');
+                body.classList.add('theme-cyberpunk');
+            }
+        });
+        
+        document.getElementById('toggle-dark-mode').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+        });
+        
+        // Capture console output for debugging
+        const originalConsole = {
+            log: console.log,
+            error: console.error,
+            warn: console.warn
+        };
+        
+        const debugInfoElement = document.getElementById('debug-info');
+        
+        // Replace console methods to display in UI
+        console.log = function() {
+            originalConsole.log.apply(console, arguments);
+            const message = Array.from(arguments).join(' ');
+            if (debugInfoElement) {
+                const logLine = document.createElement('div');
+                logLine.textContent = `LOG: ${message}`;
+                debugInfoElement.appendChild(logLine);
+                debugInfoElement.scrollTop = debugInfoElement.scrollHeight;
+            }
+        };
+        
+        console.error = function() {
+            originalConsole.error.apply(console, arguments);
+            const message = Array.from(arguments).join(' ');
+            if (debugInfoElement) {
+                const errorLine = document.createElement('div');
+                errorLine.style.color = '#f44336';
+                errorLine.textContent = `ERROR: ${message}`;
+                debugInfoElement.appendChild(errorLine);
+                debugInfoElement.scrollTop = debugInfoElement.scrollHeight;
+            }
+        };
+        
+        // Function to handle terminal output scrolling
+        function scrollTerminalToBottom() {
+            const terminalOutput = document.querySelector('.terminal-output');
+            if (terminalOutput) {
+                terminalOutput.scrollTop = terminalOutput.scrollHeight;
+            }
+            
+            // Also scroll the parent terminal section
+            const terminalSection = document.querySelector('.terminal-section');
+            if (terminalSection) {
+                terminalSection.scrollTop = terminalSection.scrollHeight;
+            }
+        }
+        
+        // Add observer to auto-scroll terminal when content changes
+        const terminalSectionObserver = new MutationObserver(scrollTerminalToBottom);
+        const terminalSection = document.querySelector('.terminal-section');
+        
+        if (terminalSection) {
+            terminalSectionObserver.observe(terminalSection, {
+                childList: true,
+                subtree: true
+            });
+            
+            // Immediately scroll to bottom after initialization
+            scrollTerminalToBottom();
+        }
+        
+        // Manual test runner
+        document.getElementById('run-all-tests').addEventListener('click', function() {
+            console.log('Run tests button clicked');
+            
+            if (typeof window.TerminalTester === 'undefined') {
+                console.error('TerminalTester not found in window object');
+                return;
+            }
+            
+            if (typeof window.initialTests === 'undefined') {
+                console.error('initialTests not found in window object');
+                return;
+            }
+            
+            console.log('Running test suite with', window.initialTests.length, 'tests');
+            window.TerminalTester.runTestSuite(window.initialTests);
+            
+            // Force scroll to bottom when tests start running
+            scrollTerminalToBottom();
+        });
+        
+        // Log test framework availability after a delay
+        setTimeout(function() {
+            console.log('Checking test framework availability:');
+            console.log('- TerminalTester:', typeof window.TerminalTester !== 'undefined' ? 'Available ✅' : 'Missing ❌');
+            console.log('- initialTests:', typeof window.initialTests !== 'undefined' ? 'Available ✅' : 'Missing ❌');
+            console.log('- TerminalTestWrapper:', typeof window.TerminalTestWrapper !== 'undefined' ? 'Available ✅' : 'Missing ❌');
+            
+            // Initial scroll to bottom
+            scrollTerminalToBottom();
+        }, 2000);
+    </script>
+</body>
+</html> 
