@@ -100,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 - cd [directory]  Navigate to a project
 - cat [file]      Display file contents
 - whoami          Display user info
+- version         Show site version
 - matrix          Toggle matrix effect
 - date            Show current date and time
 - echo [text]     Display text
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             case 'ls':
                 if (args[0] === 'projects' || args[0] === 'projects/') {
-                    return 'binaural/ silicon-zen/ claude-ui/';
+                    return 'binaural/ silicon-zen/ claude-ui/ fresh-air/ keto/';
                 } else if (args[0] === 'blog' || args[0] === 'blog/') {
                     return 'turtles-all-the-way-up.md recent-thoughts.md ai-philosophy.md';
                 } else if (args.length === 0) {
@@ -125,6 +126,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             case 'whoami':
                 return 'Developer, explorer, digital tinkerer.';
+
+            case 'version':
+                return '1ps0.info v1.1.0';
 
             case 'matrix':
                 const canvas = document.getElementById('matrix-canvas');
@@ -167,6 +171,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (args[0] === 'claude-ui') {
                     window.location.href = 'https://1ps0.github.io/claude-ui';
                     return 'Navigating to claude-ui...';
+                } else if (args[0] === 'fresh-air') {
+                    window.location.href = 'https://1ps0.info/fresh-air';
+                    return 'Navigating to fresh-air...';
+                } else if (args[0] === 'keto') {
+                    window.location.href = 'https://1ps0.info/keto';
+                    return 'Navigating to keto...';
                 } else {
                     return `cd: ${args[0]}: No such directory`;
                 }
