@@ -302,6 +302,54 @@
     display: none;
 }
 
+/* Professional theme: Show GitHub icon, hide code brackets */
+.theme-professional .github-icon {
+    display: block;
+}
+
+.theme-professional .code-icon {
+    display: none;
+}
+
+/* Style the project links as icon buttons */
+.theme-professional .project-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    margin-right: 0.75rem;
+    margin-top: 0.5rem;
+    border-radius: 6px;
+    background-color: var(--pro-card-bg-light);
+    border: 1px solid var(--pro-border-color-light);
+    transition: all 0.3s ease;
+}
+
+.theme-professional.dark-mode .project-link {
+    background-color: var(--pro-card-bg-dark);
+    border-color: var(--pro-border-color-dark);
+}
+
+.theme-professional .project-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 120, 215, 0.2);
+    border-color: var(--pro-primary-color);
+    background-color: rgba(0, 120, 215, 0.1);
+}
+
+.theme-professional.dark-mode .project-link:hover {
+    box-shadow: 0 4px 8px rgba(46, 166, 255, 0.2);
+    border-color: #2ea6ff;
+    background-color: rgba(46, 166, 255, 0.1);
+}
+
+.theme-professional .project-link svg {
+    width: 20px;
+    height: 20px;
+}
+
 .theme-professional .project-tech span {
     display: inline-block;
     background-color: #f0f0f0;

@@ -523,21 +523,43 @@ h1 {
 }
 
 .project-link {
-    display: inline-block;
-    padding: 0.4rem 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
     background-color: transparent;
     border: 1px solid var(--terminal-green);
     color: var(--terminal-green);
     text-decoration: none;
     font-family: inherit;
     transition: all 0.3s ease;
-    margin-right: 0.5rem;
+    margin-right: 0.75rem;
     margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+.project-link svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Show code brackets in cyberpunk theme, hide GitHub icon */
+.theme-cyberpunk .github-icon,
+.github-icon {
+    display: none;
+}
+
+.theme-cyberpunk .code-icon,
+.code-icon {
+    display: block;
 }
 
 .project-link:hover {
     background-color: var(--terminal-green);
     color: var(--main-bg-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 255, 65, 0.3);
 }
 
 .section-heading {
