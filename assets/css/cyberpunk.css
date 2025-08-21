@@ -155,7 +155,7 @@ h1 {
 .terminal-section {
     margin-bottom: 2rem;
     background-color: var(--dark-accent);
-    padding: 1.25rem;
+    padding: 1rem;
     border-left: 3px solid var(--terminal-green);
     max-height: 400px;
     overflow-y: auto;
@@ -163,7 +163,7 @@ h1 {
     scrollbar-color: var(--terminal-green) var(--dark-accent);
     font-family: var(--font-mono);
     font-size: 0.9rem;
-    line-height: 1.4;
+    line-height: 1.15;
 }
 
 .terminal-section::-webkit-scrollbar {
@@ -180,11 +180,14 @@ h1 {
 }
 
 .terminal-line {
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.4rem 0;
+    padding: 0;
     opacity: 0;
     transition: opacity 0.5s ease;
     word-wrap: break-word;
-    white-space: pre-wrap;
+    white-space: normal;
+    line-height: 1.3;
+    display: block;
 }
 
 .terminal-line.visible {
@@ -389,7 +392,7 @@ h1 {
 
 /* Project Categories */
 .project-category {
-    margin-bottom: 60px;
+    margin-bottom: 25px;
 }
 
 .project-category:last-child {
@@ -398,10 +401,10 @@ h1 {
 
 .category-title {
     color: var(--terminal-green);
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 300;
-    margin-bottom: 30px;
-    padding-bottom: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
     border-bottom: 1px solid rgba(0, 255, 65, 0.3);
     font-family: var(--font-mono);
     letter-spacing: 2px;
@@ -412,8 +415,8 @@ h1 {
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    margin-top: 2rem;
+    gap: 0.75rem;
+    margin-top: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -425,11 +428,16 @@ h1 {
 .project-card {
     background-color: var(--dark-accent);
     border: 1px solid var(--light-accent);
-    padding: 1.25rem;
+    padding: 0.5rem 1rem;
     border-radius: 4px;
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 /* Focus Tools - Cyan tint */
@@ -506,14 +514,24 @@ h1 {
     transform: scaleY(1);
 }
 
+.project-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
 .project-title {
-    font-size: 1.3rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+    margin: 0;
+    line-height: 1.2;
 }
 
 .project-description {
-    margin-bottom: 1.25rem;
-    opacity: 0.9;
+    margin: 0;
+    opacity: 0.8;
+    font-size: 0.9rem;
+    line-height: 1.3;
 }
 
 .project-tech {
@@ -522,27 +540,36 @@ h1 {
     color: var(--terminal-blue);
 }
 
+.project-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
 .project-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
     background-color: transparent;
     border: 1px solid var(--terminal-green);
     color: var(--terminal-green);
     text-decoration: none;
     font-family: inherit;
     transition: all 0.3s ease;
-    margin-right: 0.75rem;
-    margin-bottom: 0.5rem;
+    margin: 0;
     border-radius: 4px;
 }
 
 .project-link svg {
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
 }
+
 
 /* Show code brackets in cyberpunk theme, hide GitHub icon */
 .theme-cyberpunk .github-icon,
