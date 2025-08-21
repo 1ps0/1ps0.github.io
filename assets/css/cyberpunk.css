@@ -411,9 +411,15 @@ h1 {
 
 .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 1.5rem;
     margin-top: 2rem;
+}
+
+@media (max-width: 768px) {
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .project-card {
@@ -426,10 +432,62 @@ h1 {
     overflow: hidden;
 }
 
+/* Focus Tools - Cyan tint */
+.project-category:nth-child(1) .project-card {
+    border-color: rgba(0, 230, 230, 0.3);
+}
+
+.project-category:nth-child(1) .project-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 230, 230, 0.2);
+    border-color: var(--terminal-cyan);
+}
+
+.project-category:nth-child(1) .project-card::before {
+    background: var(--terminal-cyan);
+}
+
+.project-category:nth-child(1) .project-title {
+    color: var(--terminal-cyan);
+}
+
+/* Utility Tools - Green (default) */
+.project-category:nth-child(2) .project-card {
+    border-color: rgba(0, 255, 65, 0.3);
+}
+
+.project-category:nth-child(2) .project-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 255, 65, 0.2);
+    border-color: var(--terminal-green);
+}
+
+.project-category:nth-child(2) .project-card::before {
+    background: var(--terminal-green);
+}
+
+.project-category:nth-child(2) .project-title {
+    color: var(--terminal-green);
+}
+
+/* Resources - Yellow tint */
+.project-category:nth-child(3) .project-card {
+    border-color: rgba(255, 255, 0, 0.3);
+}
+
+.project-category:nth-child(3) .project-card:hover {
+    box-shadow: 0 8px 16px rgba(255, 255, 0, 0.2);
+    border-color: var(--terminal-yellow);
+}
+
+.project-category:nth-child(3) .project-card::before {
+    background: var(--terminal-yellow);
+}
+
+.project-category:nth-child(3) .project-title {
+    color: var(--terminal-yellow);
+}
+
 .project-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0, 255, 65, 0.1);
-    border-color: var(--terminal-green);
 }
 
 .project-card::before {
@@ -439,7 +497,6 @@ h1 {
     left: 0;
     width: 4px;
     height: 100%;
-    background: var(--terminal-green);
     transform: scaleY(0);
     transform-origin: top;
     transition: transform 0.3s ease;
@@ -452,7 +509,6 @@ h1 {
 .project-title {
     font-size: 1.3rem;
     margin-bottom: 0.75rem;
-    color: var(--terminal-green);
 }
 
 .project-description {
