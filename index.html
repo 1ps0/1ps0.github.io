@@ -13,6 +13,10 @@ title: 1ps0 | Digital Outpost
     </header>
 
     <section class="terminal-section">
+        <div class="current-path">
+            <span class="breadcrumb">user@1ps0:~</span>
+            <span class="current-dir">$</span>
+        </div>
         <div class="terminal-line">
             <span class="terminal-prompt">$</span> whoami
         </div>
@@ -29,7 +33,7 @@ title: 1ps0 | Digital Outpost
             <span class="terminal-prompt">$</span> ls projects/
         </div>
         <div class="terminal-line">
-            binaural/ silicon-zen/ claude-ui/ fresh-air/ keto/
+            binaural/ silicon-zen/ claude-ui/ fresh-air/ keto/ staccade/
         </div>
         <div class="terminal-input-container">
             <span class="terminal-prompt">$</span>
@@ -42,70 +46,106 @@ title: 1ps0 | Digital Outpost
     <section class="projects">
         <h2 class="section-heading">Featured Projects</h2>
 
-        <div class="projects-grid">
-            <!-- Project 1: Binaural -->
-            <div class="project-card">
-                <h3 class="project-title">Binaural</h3>
-                <p class="project-description">
-                    A browser-based application for playing binaural beats, solfeggio frequencies, and other therapeutic tones. This dashboard allows you to explore and use sound frequencies that may help with relaxation.
-                </p>
-                <p class="project-tech">
-                    <span>#HTML</span> <span>#audio</span> <span>#therapeutic-sound</span>
-                </p>
-                <a href="https://github.com/1ps0/binaural" class="project-link">View Code</a>
-                <a href="https://1ps0.github.io/binaural" class="project-link">Use App</a>
-            </div>
+        <!-- Focus Tools -->
+        <div class="project-category">
+            <h3 class="category-title">// Focus Tools</h3>
+            <div class="projects-grid">
+                <!-- Project 1: Binaural -->
+                <div class="project-card">
+                    <h3 class="project-title">Binaural</h3>
+                    <p class="project-description">
+                        A browser-based application for playing binaural beats, solfeggio frequencies, and other therapeutic tones. This dashboard allows you to explore and use sound frequencies that may help with relaxation.
+                    </p>
+                    <p class="project-tech">
+                        <span>#HTML</span> <span>#audio</span> <span>#therapeutic-sound</span>
+                    </p>
+                    <a href="https://github.com/1ps0/binaural" class="project-link">View Code</a>
+                    <a href="https://1ps0.github.io/binaural" class="project-link">Use App</a>
+                </div>
 
-            <!-- Project 2: Silicon Zen -->
-            <div class="project-card">
-                <h3 class="project-title">Silicon Zen</h3>
-                <p class="project-description">
-                    A collection of modern koans exploring the nature, limitations, and philosophical implications of large language models.
-                </p>
-                <p class="project-tech">
-                    <span>#HTML</span> <span>#philosophy</span> <span>#AI</span>
-                </p>
-                <a href="https://github.com/1ps0/silicon-zen" class="project-link">View Code</a>
-                <a href="https://1ps0.github.io/silicon-zen" class="project-link">Read Content</a>
-            </div>
+                <!-- Project 2: Fresh Air -->
+                <div class="project-card">
+                    <h3 class="project-title">Fresh Air</h3>
+                    <p class="project-description">
+                        Fresh Air is a multi-modal breathing guidance tool that uses visual rhythms and ambient sound to help users practice and maintain various breathing patterns for different contexts like focus, relaxation, and stress relief. 
+                    </p>
+                    <p class="project-tech">
+                        <span>#mindfulness</span> <span>#entrainment</span>
+                    </p>
+                    <a href="https://github.com/1ps0/fresh-air" class="project-link">View Code</a>
+                    <a href="https://1ps0.info/fresh-air" class="project-link">Use App</a>
+                </div>
 
-            <!-- Project 3: Claude UI -->
-            <div class="project-card">
-                <h3 class="project-title">Claude UI</h3>
-                <p class="project-description">
-                    A lightweight, standalone viewer for exported Claude AI responses and artifacts.
-                </p>
-                <p class="project-tech">
-                    <span>#JavaScript</span> <span>#UI</span> <span>#AI</span>
-                </p>
-                <a href="https://github.com/1ps0/claude-ui" class="project-link">View Code</a>
-                <a href="https://1ps0.github.io/claude-ui" class="project-link">Use App</a>
+                <!-- Project 3: Staccade -->
+                <div class="project-card">
+                    <h3 class="project-title">Staccade</h3>
+                    <p class="project-description">
+                        A focus tool that leverages the Troxler effect to make peripheral visual stimuli fade when staring at a central point. Uses optical illusions to reduce distractions and enhance concentration.
+                    </p>
+                    <p class="project-tech">
+                        <span>#troxler-effect</span> <span>#optical-illusion</span> <span>#focus</span>
+                    </p>
+                    <a href="https://github.com/1ps0/staccade" class="project-link">View Code</a>
+                    <a href="https://1ps0.info/staccade" class="project-link">Use App</a>
+                </div>
             </div>
+        </div>
 
-            <!-- Project 4: Fresh Air -->
-            <div class="project-card">
-                <h3 class="project-title">Fresh Air</h3>
-                <p class="project-description">
-                    Fresh Air is a multi-modal breathing guidance tool that uses visual rhythms and ambient sound to help users practice and maintain various breathing patterns for different contexts like focus, relaxation, and stress relief. 
-                </p>
-                <p class="project-tech">
-                    <span>#mindfulness</span> <span>#entrainment</span>
-                </p>
-                <a href="https://github.com/1ps0/fresh-air" class="project-link">View Code</a>
-                <a href="https://1ps0.info/fresh-air" class="project-link">Use App</a>
-            </div>
+        <!-- Utility Tools -->
+        <div class="project-category">
+            <h3 class="category-title">// Utility Tools</h3>
+            <div class="projects-grid">
+                <!-- Project 4: Claude UI -->
+                <div class="project-card">
+                    <h3 class="project-title">Claude UI</h3>
+                    <p class="project-description">
+                        A lightweight, standalone viewer for exported Claude AI responses and artifacts.
+                    </p>
+                    <p class="project-tech">
+                        <span>#JavaScript</span> <span>#UI</span> <span>#AI</span>
+                    </p>
+                    <a href="https://github.com/1ps0/claude-ui" class="project-link">View Code</a>
+                    <a href="https://1ps0.github.io/claude-ui" class="project-link">Use App</a>
+                </div>
 
-            <!-- Project 5: Keto -->
-            <div class="project-card">
-                <h3 class="project-title">Keto</h3>
-                <p class="project-description">
-                    Interactive Ketogenic Diet Science Guide - Evidence-based education without the hype 
-                </p>
-                <p class="project-tech">
-                    <span>#health</span> <span>#information</span>
-                </p>
-                <a href="https://github.com/1ps0/keto" class="project-link">View Code</a>
-                <a href="https://1ps0.info/keto" class="project-link">Use App</a>
+                <!-- Project 5: Mermaid -->
+                <div class="project-card">
+                    <h3 class="project-title">Mermaid Diagram Viewer</h3>
+                    <p class="project-description">
+                        A beautiful web application for creating and visualizing Mermaid diagrams. Real-time preview, multiple themes, SVG export, and support for 12+ diagram types.
+                    </p>
+                    <p class="project-tech">
+                        <span>#diagramming</span> <span>#visualization</span> <span>#mermaid.js</span>
+                    </p>
+                    <a href="https://github.com/1ps0/mermaid" class="project-link">View Code</a>
+                    <a href="https://1ps0.info/mermaid" class="project-link">Use App</a>
+                </div>
+
+                <!-- Project 6: Silicon Zen -->
+                <div class="project-card">
+                    <h3 class="project-title">Silicon Zen</h3>
+                    <p class="project-description">
+                        A collection of modern koans exploring the nature, limitations, and philosophical implications of large language models.
+                    </p>
+                    <p class="project-tech">
+                        <span>#HTML</span> <span>#philosophy</span> <span>#AI</span>
+                    </p>
+                    <a href="https://github.com/1ps0/silicon-zen" class="project-link">View Code</a>
+                    <a href="https://1ps0.github.io/silicon-zen" class="project-link">Read Content</a>
+                </div>
+
+                <!-- Project 7: Keto -->
+                <div class="project-card">
+                    <h3 class="project-title">Keto</h3>
+                    <p class="project-description">
+                        Interactive Ketogenic Diet Science Guide - Evidence-based education without the hype 
+                    </p>
+                    <p class="project-tech">
+                        <span>#health</span> <span>#information</span>
+                    </p>
+                    <a href="https://github.com/1ps0/keto" class="project-link">View Code</a>
+                    <a href="https://1ps0.info/keto" class="project-link">Use App</a>
+                </div>
             </div>
         </div>
     </section>
@@ -130,6 +170,9 @@ title: 1ps0 | Digital Outpost
     <footer>
         <p>// 1ps0 // <span id="current-year">2025</span> //</p>
         <div class="social-links">
+            <a href="/card.html" class="social-link" title="Business Card">
+                <i class="fas fa-qrcode"></i>
+            </a>
             <a href="https://github.com/1ps0" class="social-link" title="GitHub">
                 <i class="fab fa-github"></i>
             </a>

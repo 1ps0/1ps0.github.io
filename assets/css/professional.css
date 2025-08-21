@@ -170,6 +170,31 @@
     color: var(--pro-text-color-dark);
 }
 
+/* Project Categories */
+.theme-professional .project-category {
+    margin-bottom: 50px;
+}
+
+.theme-professional .project-category:last-child {
+    margin-bottom: 0;
+}
+
+.theme-professional .category-title {
+    color: var(--pro-text-color-light);
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 25px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--pro-border-color-light);
+    font-family: var(--pro-font-sans);
+    letter-spacing: 0.5px;
+}
+
+.theme-professional.dark-mode .category-title {
+    color: var(--pro-text-color-dark);
+    border-bottom-color: var(--pro-border-color-dark);
+}
+
 .theme-professional .project-card {
     background-color: var(--pro-card-bg-light);
     border: 1px solid var(--pro-border-color-light);
