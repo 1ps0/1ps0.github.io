@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Card | 1ps0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Inline CSS for testing - includes both cyberpunk and business card styles */
+        :root {
+            --main-bg-color: #0a0a0a;
+            --terminal-green: #00ff41;
+            --terminal-dim: #00992a;
+            --terminal-blue: #1a81ff;
+            --terminal-cyan: #00e6e6;
+            --terminal-yellow: #ffff00;
+            --terminal-red: #ff0000;
+            --terminal-magenta: #ff00ff;
+            --dark-accent: #111;
+            --light-accent: #222;
+            --text-color: #f0f0f0;
+            --font-mono: 'Courier New', monospace;
+            --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+            /* Professional theme colors */
+            --pro-bg-color-light: #ffffff;
+            --pro-bg-color-dark: #1e1e1e;
+            --pro-text-color-light: #333333;
+            --pro-text-color-dark: #d4d4d4;
+            --pro-primary-color: #0078d7;
+            --pro-secondary-color: #5c2d91;
+            --pro-accent-color: #107c10;
+            --pro-border-color-light: #e0e0e0;
+            --pro-border-color-dark: #444444;
+            --pro-card-bg-light: #f5f5f5;
+            --pro-card-bg-dark: #252526;
+            --pro-hover-color-light: #eaeaea;
+            --pro-hover-color-dark: #2a2d2e;
+            --pro-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --pro-font-mono: 'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Business Card Styles */
+        .business-card-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: var(--font-sans);
+        }
+
+        /* Desktop Toggle - Hidden on mobile */
+        .desktop-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+        }
+
+        .toggle-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--light-accent);
+            border: 1px solid var(--terminal-dim);
+            border-radius: 0.5rem;
+            color: var(--text-color);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn:hover {
+            background: var(--terminal-green);
+            color: var(--main-bg-color);
+        }
+
+        /* Profile Header */
+        .card-header {
+            text-align: center;
+            padding: 1rem 0;
+            border-bottom: 2px solid var(--terminal-dim);
+            position: relative;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0;
+            color: var(--terminal-green);
+            font-family: var(--font-mono);
+        }
+
+        .profile-title {
+            font-size: 1rem;
+            margin: 0.25rem 0;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .profile-tagline {
+            font-size: 0.875rem;
+            margin: 0.5rem 0 0 0;
+            opacity: 0.7;
+            font-style: italic;
+        }
+
+        /* Main QR Section */
+        .main-qr-section {
+            display: flex;
+            justify-content: center;
+            padding: 1rem 0;
+        }
+
+        .main-qr {
+            text-align: center;
+            padding: 1rem;
+            border: 2px solid var(--terminal-green);
+            border-radius: 1rem;
+            background: rgba(0, 255, 65, 0.05);
+        }
+
+        .main-qr .qr-code {
+            filter: drop-shadow(0 0 10px var(--terminal-green));
+        }
+
+        .qr-label {
+            margin: 0.5rem 0 0.25rem 0;
+            font-weight: bold;
+            font-size: 0.875rem;
+        }
+
+        .qr-url {
+            margin: 0;
+            font-size: 0.75rem;
+            opacity: 0.8;
+            font-family: var(--font-mono);
+        }
+
+        .qr-desc {
+            margin: 0.25rem 0 0 0;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0 0 1rem 0;
+            text-align: center;
+            color: var(--terminal-cyan);
+            font-family: var(--font-mono);
+        }
+
+        /* QR Grids */
+        .qr-grid {
+            display: grid;
+            gap: 1rem;
+            justify-items: center;
+        }
+
+        .projects-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .contact-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .qr-container {
+            text-align: center;
+            padding: 0.75rem;
+            border: 1px solid var(--terminal-dim);
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .qr-container:hover {
+            border-color: var(--terminal-green);
+            background: rgba(0, 255, 65, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .qr-code {
+            display: block;
+            margin: 0 auto;
+            border-radius: 0.25rem;
+            background: var(--main-bg-color);
+            padding: 0.25rem;
+        }
+
+        .qr-code rect,
+        .qr-code path {
+            fill: var(--terminal-green);
+        }
+
+        /* Card Footer */
+        .card-footer {
+            margin-top: auto;
+            padding: 1rem 0;
+            text-align: center;
+            border-top: 1px solid var(--terminal-dim);
+        }
+
+        .fallback-text {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin: 0;
+            font-family: var(--font-mono);
+            letter-spacing: 0.5px;
+        }
+
+        /* Professional Theme */
+        .theme-professional {
+            background-color: var(--pro-bg-color-light);
+            color: var(--pro-text-color-light);
+            font-family: var(--pro-font-sans);
+        }
+
+        .theme-professional .business-card-container {
+            background: var(--pro-bg-color-light);
+            color: var(--pro-text-color-light);
+        }
+
+        .theme-professional .profile-name {
+            color: var(--pro-primary-color);
+        }
+
+        .theme-professional .section-title {
+            color: var(--pro-primary-color);
+        }
+
+        .theme-professional .main-qr {
+            border-color: var(--pro-primary-color);
+            background: rgba(0, 120, 215, 0.05);
+        }
+
+        .theme-professional .main-qr .qr-code {
+            filter: drop-shadow(0 2px 8px rgba(0, 120, 215, 0.3));
+        }
+
+        .theme-professional .qr-code rect,
+        .theme-professional .qr-code path {
+            fill: var(--pro-primary-color);
+        }
+
+        .theme-professional .qr-container {
+            border-color: var(--pro-border-color-light);
+        }
+
+        .theme-professional .qr-container:hover {
+            border-color: var(--pro-primary-color);
+            background: rgba(0, 120, 215, 0.1);
+        }
+
+        /* Desktop Responsive */
+        @media (min-width: 768px) {
+            .desktop-toggle {
+                display: block;
+            }
+            
+            .business-card-container {
+                max-width: 480px;
+                padding: 2rem;
+                gap: 2rem;
+            }
+            
+            .profile-name {
+                font-size: 2.5rem;
+            }
+            
+            .main-qr .qr-code {
+                width: 140px;
+                height: 140px;
+            }
+            
+            .projects-grid .qr-code {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .contact-grid .qr-code {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1024px) {
+            .business-card-container {
+                max-width: 520px;
+                padding: 2.5rem;
+            }
+            
+            .projects-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .contact-grid {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 300px;
+                margin: 0 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="business-card-container">
+        <!-- Desktop Toggle (hidden on mobile) -->
+        <div class="desktop-toggle">
+            <button id="view-toggle" class="toggle-btn" aria-label="Toggle between card and portfolio view">
+                <i class="fas fa-expand-arrows-alt"></i>
+                <span>Full Portfolio</span>
+            </button>
+        </div>
+
+        <!-- Profile Header -->
+        <header class="card-header">
+            <div class="profile-info">
+                <h1 class="profile-name">1ps0</h1>
+                <p class="profile-title">Digital Explorer & Developer</p>
+                <p class="profile-tagline">Building tools for minds and machines</p>
+            </div>
+        </header>
+
+        <!-- Main Profile QR -->
+        <section class="main-qr-section">
+            <div class="qr-container main-qr">
+                <svg class="qr-code" id="main-qr-svg" width="120" height="120" xmlns="http://www.w3.org/2000/svg">
+                    <!-- QR for https://1ps0.github.io will be generated here -->
+                </svg>
+                <p class="qr-label">Main Portfolio</p>
+                <p class="qr-url">1ps0.github.io</p>
+            </div>
+        </section>
+
+        <!-- Project QRs Grid -->
+        <section class="projects-qr-section">
+            <h2 class="section-title">Projects</h2>
+            <div class="qr-grid projects-grid">
+                <div class="qr-container">
+                    <svg class="qr-code" id="binaural-qr-svg" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for binaural app -->
+                    </svg>
+                    <p class="qr-label">Binaural</p>
+                    <p class="qr-desc">Therapeutic Audio</p>
+                </div>
+                
+                <div class="qr-container">
+                    <svg class="qr-code" id="silicon-zen-qr-svg" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for silicon-zen -->
+                    </svg>
+                    <p class="qr-label">Silicon Zen</p>
+                    <p class="qr-desc">AI Philosophy</p>
+                </div>
+                
+                <div class="qr-container">
+                    <svg class="qr-code" id="claude-ui-qr-svg" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for claude-ui -->
+                    </svg>
+                    <p class="qr-label">Claude UI</p>
+                    <p class="qr-desc">AI Viewer</p>
+                </div>
+                
+                <div class="qr-container">
+                    <svg class="qr-code" id="fresh-air-qr-svg" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for fresh-air -->
+                    </svg>
+                    <p class="qr-label">Fresh Air</p>
+                    <p class="qr-desc">Breathing Guide</p>
+                </div>
+
+                <div class="qr-container">
+                    <svg class="qr-code" id="cbrain-qr-svg" width="80" height="80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for cbrain-sciences -->
+                    </svg>
+                    <p class="qr-label">CBrain Sciences</p>
+                    <p class="qr-desc">Cognitive Assessment</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact & Social QRs -->
+        <section class="contact-qr-section">
+            <h2 class="section-title">Connect</h2>
+            <div class="qr-grid contact-grid">
+                <div class="qr-container">
+                    <svg class="qr-code" id="blog-qr-svg" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for blog -->
+                    </svg>
+                    <p class="qr-label">Blog</p>
+                </div>
+                
+                <div class="qr-container">
+                    <svg class="qr-code" id="github-qr-svg" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for GitHub -->
+                    </svg>
+                    <p class="qr-label">GitHub</p>
+                </div>
+                
+                <div class="qr-container">
+                    <svg class="qr-code" id="bluesky-qr-svg" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+                        <!-- QR for Bluesky -->
+                    </svg>
+                    <p class="qr-label">Bluesky</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fallback Contact Info -->
+        <footer class="card-footer">
+            <div class="contact-fallback">
+                <p class="fallback-text">1ps0.github.io • github.com/1ps0</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+
+    <script>
+        // QR Code generation and card functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Generate static QR codes
+            generateQRCodes();
+            
+            // Setup desktop toggle
+            setupDesktopToggle();
+            
+            // Setup theme integration
+            setupThemeIntegration();
+        });
+
+        function generateQRCodes() {
+            const qrConfigs = [
+                { id: 'main-qr-svg', url: 'https://1ps0.github.io', size: 120 },
+                { id: 'binaural-qr-svg', url: 'https://1ps0.github.io/binaural', size: 80 },
+                { id: 'silicon-zen-qr-svg', url: 'https://1ps0.github.io/silicon-zen', size: 80 },
+                { id: 'claude-ui-qr-svg', url: 'https://1ps0.github.io/claude-ui', size: 80 },
+                { id: 'fresh-air-qr-svg', url: 'https://1ps0.info/fresh-air', size: 80 },
+                { id: 'cbrain-qr-svg', url: 'https://1ps0.info/cbrain-sciences', size: 80 },
+                { id: 'blog-qr-svg', url: 'https://1ps0.github.io/blog/', size: 60 },
+                { id: 'github-qr-svg', url: 'https://github.com/1ps0', size: 60 },
+                { id: 'bluesky-qr-svg', url: 'https://bsky.app/profile/1ps0.bsky.social', size: 60 }
+            ];
+
+            // Generate QR codes
+            qrConfigs.forEach(config => {
+                generateQRSVG(config.id, config.url, config.size);
+            });
+        }
+
+        function generateQRSVG(elementId, url, size) {
+            const svgElement = document.getElementById(elementId);
+            try {
+                // Use qrcode-generator library
+                const qr = qrcode(0, 'M'); // Type 0 (auto), Error correction level M
+                qr.addData(url);
+                qr.make();
+                
+                const moduleCount = qr.getModuleCount();
+                const moduleSize = size / moduleCount;
+                
+                let svgContent = '';
+                for (let row = 0; row < moduleCount; row++) {
+                    for (let col = 0; col < moduleCount; col++) {
+                        if (qr.isDark(row, col)) {
+                            svgContent += `<rect x="${col * moduleSize}" y="${row * moduleSize}" 
+                                          width="${moduleSize}" height="${moduleSize}" 
+                                          fill="currentColor"/>`;
+                        }
+                    }
+                }
+                
+                svgElement.innerHTML = svgContent;
+                svgElement.setAttribute('viewBox', `0 0 ${size} ${size}`);
+            } catch (e) {
+                console.warn('QR generation failed, using fallback:', e);
+                svgElement.innerHTML = generateFallbackQR(url, size);
+            }
+        }
+
+        function generateFallbackQR(url, size) {
+            // Simple pattern-based fallback QR representation
+            const moduleSize = Math.floor(size / 21); // Standard QR has 21x21 modules for version 1
+            let svg = '';
+            
+            // Create a simple pattern based on URL hash for visual consistency
+            const hash = simpleHash(url);
+            for (let y = 0; y < 21; y++) {
+                for (let x = 0; x < 21; x++) {
+                    // Create finder patterns (corners)
+                    const isFinderPattern = (x < 7 && y < 7) || (x >= 14 && y < 7) || (x < 7 && y >= 14);
+                    const isModule = isFinderPattern || ((hash + x + y * 21) % 3 === 0);
+                    
+                    if (isModule) {
+                        svg += `<rect x="${x * moduleSize}" y="${y * moduleSize}" 
+                                width="${moduleSize}" height="${moduleSize}" 
+                                fill="currentColor"/>`;
+                    }
+                }
+            }
+            return svg;
+        }
+
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            return Math.abs(hash);
+        }
+
+        function setupDesktopToggle() {
+            // Desktop detection and toggle setup
+            const isDesktop = window.innerWidth >= 768;
+            const toggle = document.querySelector('.desktop-toggle');
+            
+            if (isDesktop) {
+                toggle.style.display = 'block';
+                
+                document.getElementById('view-toggle').addEventListener('click', function() {
+                    // Toggle between card view and full portfolio
+                    window.location.href = '/';
+                });
+            }
+        }
+
+        function setupThemeIntegration() {
+            // Initialize theme system for business card
+            const savedTheme = localStorage.getItem('theme') || 'cyberpunk';
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            document.body.className = savedTheme === 'professional' ? 'theme-professional' : '';
+            if (isDarkMode && savedTheme === 'professional') {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // Add theme toggle for desktop
+            if (window.innerWidth >= 768) {
+                addThemeToggle();
+            }
+        }
+
+        function addThemeToggle() {
+            const toggleContainer = document.querySelector('.desktop-toggle');
+            if (!toggleContainer) return;
+            
+            const themeToggle = document.createElement('button');
+            themeToggle.className = 'toggle-btn theme-toggle-btn';
+            themeToggle.innerHTML = '<i class="fas fa-palette"></i><span>Theme</span>';
+            themeToggle.style.marginLeft = '0.5rem';
+            
+            themeToggle.addEventListener('click', function() {
+                const currentTheme = document.body.classList.contains('theme-professional') ? 'professional' : 'cyberpunk';
+                const newTheme = currentTheme === 'professional' ? 'cyberpunk' : 'professional';
+                
+                document.body.className = newTheme === 'professional' ? 'theme-professional' : '';
+                localStorage.setItem('theme', newTheme);
+                
+                // Regenerate QR codes with new theme colors
+                setTimeout(generateQRCodes, 100);
+            });
+            
+            toggleContainer.appendChild(themeToggle);
+        }
+    </script>
+</body>
+</html> 

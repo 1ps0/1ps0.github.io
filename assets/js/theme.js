@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 'claude-ui': { type: 'link', target: 'https://1ps0.github.io/claude-ui' },
                 'fresh-air': { type: 'link', target: 'https://1ps0.info/fresh-air' },
                 'keto': { type: 'link', target: 'https://1ps0.info/keto' },
-                'staccade': { type: 'link', target: 'https://1ps0.github.io/staccade' }
+                'staccade': { type: 'link', target: 'https://1ps0.github.io/staccade' },
+                'cbrain-sciences': { type: 'link', target: 'https://1ps0.info/cbrain-sciences' }
             }
         },
         '/home/user/blog': {
